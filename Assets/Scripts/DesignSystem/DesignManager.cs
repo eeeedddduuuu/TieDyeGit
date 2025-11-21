@@ -1,25 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class DesignManager : MonoBehaviour
 {
-    [Header("UIÒıÓÃ")]
+    [Header("UIï¿½ï¿½ï¿½ï¿½")]
     public Transform patternButtonsContainer; // PatternButtonsContainer
-    public RectTransform designArea; // DesignArea - ¸ÄÎªRectTransformÀàĞÍ
+    public RectTransform designArea; // DesignArea - ï¿½ï¿½ÎªRectTransformï¿½ï¿½ï¿½ï¿½
     public Button clearButton;
     public Button nextStepButton;
 
-    [Header("¹¤¾ßÀ¸ÒıÓÃ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public ToolbarManager toolbarManager;
 
-    [Header("Ô¤ÖÆÌåºÍËØ²Ä")]
-    public GameObject patternPrefab; // »¨ÎÆÔ¤ÖÆÌå
+    [Header("Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø²ï¿½")]
+    public GameObject patternPrefab; // ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½
     public List<PatternData> availablePatterns = new List<PatternData>();
 
-    [Header("µ±Ç°×´Ì¬")]
+    [Header("ï¿½ï¿½Ç°×´Ì¬")]
     public DraggablePattern selectedPattern;
     public CanvasDesignData currentDesign = new CanvasDesignData();
+    private bool isDesignLocked = false; // è®¾è®¡æ˜¯å¦è¢«é”å®š
 
     void Start()
     {
@@ -29,17 +31,17 @@ public class DesignManager : MonoBehaviour
 
     void Update()
     {
-        // ´¦ÀíÊó±ê¹öÂÖÊäÈë
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         HandleMouseWheelInput();
 
-        // ´¦Àí¼üÅÌÊäÈë£¨É¾³ı¼ü£©
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¨É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         HandleKeyboardInput();
     }
 
-    // ³õÊ¼»¯UI
+    // ï¿½ï¿½Ê¼ï¿½ï¿½UI
     private void InitializeUI()
     {
-        // °ó¶¨°´Å¥ÊÂ¼ş
+        // ï¿½ó¶¨°ï¿½Å¥ï¿½Â¼ï¿½
         if (clearButton != null)
             clearButton.onClick.AddListener(ClearDesign);
 
@@ -47,7 +49,7 @@ public class DesignManager : MonoBehaviour
             nextStepButton.onClick.AddListener(SaveAndProceed);
     }
 
-    // ´¦Àí¼üÅÌÊäÈë
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void HandleKeyboardInput()
     {
         if (Input.GetKeyDown(KeyCode.Delete))
@@ -56,57 +58,57 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // ¼ÓÔØ»¨ÎÆ°´Å¥£¨±£³Ö²»±ä£©
+    // ï¿½ï¿½ï¿½Ø»ï¿½ï¿½Æ°ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ä£©
     private void LoadPatternButtons()
     {
         if (patternButtonsContainer == null) return;
 
-        // Çå¿ÕÏÖÓĞ°´Å¥
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ°ï¿½Å¥
         foreach (Transform child in patternButtonsContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // ÎªÃ¿¸ö»¨ÎÆ´´½¨°´Å¥
+        // ÎªÃ¿ï¿½ï¿½ï¿½ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ï¿½ï¿½Å¥
         foreach (PatternData pattern in availablePatterns)
         {
             CreatePatternButton(pattern);
         }
     }
 
-    // ´´½¨»¨ÎÆ°´Å¥£¨±£³Ö²»±ä£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ°ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ä£©
     private void CreatePatternButton(PatternData pattern)
     {
-        // ´´½¨°´Å¥¶ÔÏó
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
         GameObject buttonObj = new GameObject($"Btn_{pattern.patternId}");
         buttonObj.transform.SetParent(patternButtonsContainer, false);
 
-        // Ìí¼ÓUI×é¼ş
+        // ï¿½ï¿½ï¿½ï¿½UIï¿½ï¿½ï¿½
         Image image = buttonObj.AddComponent<Image>();
         Button button = buttonObj.AddComponent<Button>();
 
-        // ÉèÖÃ°´Å¥Íâ¹Û
+        // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½ï¿½ï¿½
         image.sprite = pattern.patternSprite;
         image.preserveAspect = true;
 
-        // ÉèÖÃ°´Å¥´óĞ¡
+        // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½ï¿½Ğ¡
         RectTransform rectTransform = buttonObj.GetComponent<RectTransform>();
         rectTransform.sizeDelta = new Vector2(80, 80);
 
-        // °ó¶¨µã»÷ÊÂ¼ş
+        // ï¿½ó¶¨µï¿½ï¿½ï¿½Â¼ï¿½
         button.onClick.AddListener(() => OnPatternSelected(pattern));
     }
 
-    // µ±»¨ÎÆ±»Ñ¡ÔñÊ±µ÷ÓÃ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Æ±ï¿½Ñ¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
     public void OnPatternSelected(PatternData patternData)
     {
         if (patternPrefab == null || designArea == null)
         {
-            Debug.LogError("È±ÉÙÔ¤ÖÆÌå»òÉè¼ÆÇøÓòÒıÓÃ£¡");
+            Debug.LogError("È±ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½");
             return;
         }
 
-        // ÊµÀı»¯ĞÂ»¨ÎÆ
+        // Êµï¿½ï¿½ï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½
         GameObject newPatternObj = Instantiate(patternPrefab, designArea);
         DraggablePattern draggablePattern = newPatternObj.GetComponent<DraggablePattern>();
 
@@ -114,22 +116,22 @@ public class DesignManager : MonoBehaviour
         {
             draggablePattern.Initialize(patternData);
 
-            // ÉèÖÃ³õÊ¼Î»ÖÃ£¨ÔÚ»­²¼ÖĞĞÄ¸½½üËæ»úÆ«ÒÆ£©
+            // ï¿½ï¿½ï¿½Ã³ï¿½Ê¼Î»ï¿½Ã£ï¿½ï¿½Ú»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½Æ£ï¿½
             RectTransform rectTransform = newPatternObj.GetComponent<RectTransform>();
             rectTransform.anchoredPosition = new Vector2(
                 Random.Range(-100, 100),
                 Random.Range(-100, 100)
             );
 
-            // Ñ¡ÖĞĞÂ´´½¨µÄ»¨ÎÆ
+            // Ñ¡ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½
             SelectPattern(draggablePattern);
         }
     }
 
-    // Ñ¡Ôñ»¨ÎÆ£¨¸üĞÂ°æ±¾£©
+    // Ñ¡ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½Â°æ±¾ï¿½ï¿½
     public void SelectPattern(DraggablePattern pattern)
     {
-        // È¡ÏûÖ®Ç°µÄÑ¡Ôñ
+        // È¡ï¿½ï¿½Ö®Ç°ï¿½ï¿½Ñ¡ï¿½ï¿½
         if (selectedPattern != null)
         {
             selectedPattern.SetSelected(false);
@@ -137,13 +139,13 @@ public class DesignManager : MonoBehaviour
 
         selectedPattern = pattern;
 
-        // ÉèÖÃĞÂÑ¡Ôñ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
         if (selectedPattern != null)
         {
             selectedPattern.SetSelected(true);
             selectedPattern.transform.SetAsLastSibling();
 
-            // ¸üĞÂ¹¤¾ßÀ¸×´Ì¬
+            // ï¿½ï¿½ï¿½Â¹ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
             if (toolbarManager != null)
             {
                 toolbarManager.UpdateToolbarState(true);
@@ -151,7 +153,7 @@ public class DesignManager : MonoBehaviour
         }
         else
         {
-            // Ã»ÓĞÑ¡ÖĞÈÎºÎ»¨ÎÆÊ±¸üĞÂ¹¤¾ßÀ¸
+            // Ã»ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ÎºÎ»ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Â¹ï¿½ï¿½ï¿½ï¿½ï¿½
             if (toolbarManager != null)
             {
                 toolbarManager.UpdateToolbarState(false);
@@ -159,7 +161,7 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // ÉèÖÃµ±Ç°Ä£Ê½
+    // ï¿½ï¿½ï¿½Ãµï¿½Ç°Ä£Ê½
     public void SetCurrentMode(DraggablePattern.InteractionMode mode)
     {
         if (selectedPattern != null)
@@ -168,17 +170,17 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // É¾³ıÑ¡ÖĞµÄ»¨ÎÆ
+    // É¾ï¿½ï¿½Ñ¡ï¿½ĞµÄ»ï¿½ï¿½ï¿½
     public void DeleteSelectedPattern()
     {
         if (selectedPattern != null)
         {
             Destroy(selectedPattern.gameObject);
-            SelectPattern(null); // Çå³ıÑ¡Ôñ
+            SelectPattern(null); // ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
         }
     }
 
-    // ´¦ÀíÊó±ê¹öÂÖÊäÈë
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void HandleMouseWheelInput()
     {
         if (selectedPattern == null) return;
@@ -197,7 +199,7 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // Çå³ıÉè¼Æ£¨¸üĞÂ°æ±¾£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½Â°æ±¾ï¿½ï¿½
     public void ClearDesign()
     {
         if (designArea == null) return;
@@ -212,27 +214,78 @@ public class DesignManager : MonoBehaviour
         }
 
         currentDesign.placements.Clear();
-        SelectPattern(null); // Çå³ıÑ¡Ôñ
+        SelectPattern(null); // ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
     }
 
-    // ±£´æ²¢½øÈëÏÂÒ»²½£¨±£³Ö²»±ä£©
+    // ï¿½ï¿½ï¿½æ²¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ä£©
     public void SaveAndProceed()
     {
-        // ÊÕ¼¯ËùÓĞ»¨ÎÆÊı¾İ
+        // é”å®šè®¾è®¡åŒºèŠ±çº¹ï¼Œä½¿å…¶ä¸å¯å†å˜åŠ¨
+        LockDesign();
+        
+        // è®©clearButtonç¼©æ”¾æ¶ˆå¤±
+        HideClearButton();
+
+        // ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         CollectDesignData();
 
-        // ±£´æÊı¾İ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         SaveDesignData();
 
-        // ½øÈëÏÂÒ»²½
-        Debug.Log("Éè¼Æ±£´æÍê³É£¬×¼±¸½øÈëÏÂÒ»²½...");
-        Debug.Log($"¹²±£´æÁË {currentDesign.placements.Count} ¸ö»¨ÎÆ");
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+        Debug.Log("ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½...");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {currentDesign.placements.Count} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 
-        // Ìø×ªµ½ÔúÈ¾³¡¾°
+        // ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¿½ï¿½ï¿½
        // UnityEngine.SceneManagement.SceneManager.LoadScene("TieDyeScene");
     }
+    
+    // é”å®šè®¾è®¡åŒºèŠ±çº¹ï¼Œä½¿å…¶ä¸å¯å†å˜åŠ¨
+    private void LockDesign()
+    {
+        isDesignLocked = true;
+        
+        if (designArea != null)
+        {
+            foreach (Transform child in designArea)
+            {
+                DraggablePattern pattern = child.GetComponent<DraggablePattern>();
+                if (pattern != null)
+                {
+                    // ç¦ç”¨äº¤äº’
+                    CanvasGroup canvasGroup = pattern.GetComponent<CanvasGroup>();
+                    if (canvasGroup != null)
+                    {
+                        canvasGroup.blocksRaycasts = false;
+                    }
+                    
+                    // å–æ¶ˆé€‰ä¸­çŠ¶æ€
+                    pattern.SetSelected(false);
+                }
+            }
+        }
+        
+        // å–æ¶ˆå½“å‰é€‰ä¸­çš„èŠ±çº¹
+        SelectPattern(null);
+    }
+    
+    // éšè—ClearButtoné€šè¿‡ç¼©æ”¾åŠ¨ç”»
+    private void HideClearButton()
+    {
+        if (clearButton != null)
+        {
+            RectTransform clearButtonRect = clearButton.GetComponent<RectTransform>();
+            if (clearButtonRect != null)
+            {
+                // ä½¿ç”¨DOTweenå®ç°ç¼©æ”¾æ¶ˆå¤±åŠ¨ç”»
+                clearButtonRect.DOScale(Vector3.zero, 0.3f).OnComplete(() => {
+                    clearButton.gameObject.SetActive(false);
+                });
+            }
+        }
+    }
 
-    // ÊÕ¼¯Éè¼ÆÊı¾İ£¨±£³Ö²»±ä£©
+    // ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ä£©
     private void CollectDesignData()
     {
         currentDesign.placements.Clear();
@@ -249,11 +302,11 @@ public class DesignManager : MonoBehaviour
 
     private void SaveDesignData()
     {
-        // ÊÕ¼¯Éè¼ÆÇøÓòĞÅÏ¢
+        // ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
         Vector2 designAreaSize = designArea.rect.size;
         Vector2 designAreaPosition = designArea.anchoredPosition;
 
-        // ´´½¨°üº¬Éè¼ÆÇøÓòĞÅÏ¢µÄÊı¾İ½á¹¹
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½İ½á¹¹
         DesignSessionData sessionData = new DesignSessionData
         {
             designData = currentDesign,
@@ -265,15 +318,15 @@ public class DesignManager : MonoBehaviour
         PlayerPrefs.SetString("CurrentDesign", jsonData);
         PlayerPrefs.Save();
 
-        Debug.Log("Éè¼ÆÊı¾İÒÑ±£´æ£¬Éè¼ÆÇøÓò³ß´ç: " + designAreaSize);
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½: " + designAreaSize);
     }
 
-    // ĞÂÔöÉè¼Æ»á»°Êı¾İÀà
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ»á»°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     [System.Serializable]
     public class DesignSessionData
     {
         public CanvasDesignData designData;
-        public Vector2 canvasSize;      // Éè¼ÆÇøÓò³ß´ç
-        public Vector2 canvasPosition;  // Éè¼ÆÇøÓòÎ»ÖÃ
+        public Vector2 canvasSize;      // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½
+        public Vector2 canvasPosition;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
     }
 }

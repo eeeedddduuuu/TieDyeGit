@@ -1,0 +1,44 @@
+# 动画效果测试说明
+
+## 测试准备
+1. 确保已按照"安装指南.txt"的步骤正确配置了DesignUIAnimation脚本
+2. 确保PatternSelectionPanel和Toolbar的初始位置正确显示在屏幕上
+
+## 测试步骤
+1. 在Unity编辑器中打开Assets/Scenes/Design/DesignScene.unity场景
+2. 点击编辑器顶部的播放按钮进入游戏模式
+3. 找到并点击NextStepButton按钮
+4. 观察以下动画效果是否符合预期：
+   - PatternSelectionPanel是否在1秒内向左移动了50个单位
+   - Toolbar是否在1秒内向右移动并消失
+
+## 可能的调整
+如果动画效果不理想，可以在DesignUIAnimation组件的Inspector面板中调整以下参数：
+
+1. **Animation Duration**：
+   - 默认值：1秒
+   - 减小该值会使动画播放更快
+   - 增大该值会使动画播放更慢
+
+2. **Panel Move Distance**：
+   - 默认值：50单位
+   - 确保该值足够使PatternSelectionPanel向左移动到预期位置
+
+3. **Toolbar Move Distance**：
+   - 默认值：200单位
+   - 可能需要根据Toolbar的实际宽度调整此值，确保它完全移出屏幕
+
+## 故障排除
+如果动画不播放，请检查以下几点：
+
+1. DOTween是否正确安装在项目中
+   - 检查Assets/DOTween文件夹是否存在且完整
+   - 确保没有编译错误
+
+2. 组件引用是否正确设置
+   - 确认PatternSelectionPanel和Toolbar字段已经正确赋值
+   - 确认这些对象都有RectTransform组件
+
+3. 按钮点击事件是否正常工作
+   - 可以在OnNextStepButtonClicked方法中添加Debug.Log来验证点击事件是否触发
+   - 例如：Debug.Log("NextStepButton clicked!");

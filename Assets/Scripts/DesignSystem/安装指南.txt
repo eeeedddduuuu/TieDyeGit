@@ -1,0 +1,35 @@
+# DesignUIAnimation脚本安装指南
+
+## 步骤1：打开DesignScene场景
+在Unity编辑器中，打开Assets/Scenes/Design/DesignScene.unity场景文件。
+
+## 步骤2：挂载脚本到NextStepButton
+1. 在Hierarchy面板中找到NextStepButton对象
+2. 选中该对象，在Inspector面板中点击"Add Component"按钮
+3. 搜索并选择"DesignUIAnimation"组件添加到按钮上
+
+## 步骤3：配置组件引用
+在DesignUIAnimation组件的Inspector面板中：
+
+1. 将PatternSelectionPanel拖放到对应的字段中
+   - 在Hierarchy面板中找到PatternSelectionPanel对象
+   - 将其拖放到DesignUIAnimation组件的"Pattern Selection Panel"字段中
+
+2. 将Toolbar拖放到对应的字段中
+   - 在Hierarchy面板中找到Toolbar对象
+   - 将其拖放到DesignUIAnimation组件的"Toolbar"字段中
+
+3. 调整动画参数（可选）
+   - Animation Duration: 动画持续时间，默认为1秒
+   - Panel Move Distance: PatternSelectionPanel向左移动的距离，默认为50单位
+   - Toolbar Move Distance: Toolbar向右移动的距离，默认为200单位（可根据实际需求调整）
+
+## 步骤4：测试
+1. 点击Unity编辑器顶部的播放按钮进入游戏模式
+2. 点击NextStepButton按钮
+3. 观察PatternSelectionPanel是否向左移动50个单位，Toolbar是否向右移动并消失
+
+## 注意事项
+- 确保DOTween已经正确安装在项目中
+- 确保PatternSelectionPanel和Toolbar都是RectTransform组件
+- 如果动画效果不理想，可以调整Inspector面板中的移动距离参数
