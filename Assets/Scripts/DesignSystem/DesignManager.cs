@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class DesignManager : MonoBehaviour
 {
@@ -21,7 +20,6 @@ public class DesignManager : MonoBehaviour
     [Header("��ǰ״̬")]
     public DraggablePattern selectedPattern;
     public CanvasDesignData currentDesign = new CanvasDesignData();
-    private bool isDesignLocked = false; // 设计是否被锁定
 
     void Start()
     {
@@ -220,12 +218,6 @@ public class DesignManager : MonoBehaviour
     // ���沢������һ�������ֲ��䣩
     public void SaveAndProceed()
     {
-        // 锁定设计区花纹，使其不可再变动
-        LockDesign();
-        
-        // 让clearButton缩放消失
-        HideClearButton();
-
         // �ռ����л�������
         CollectDesignData();
 
@@ -238,51 +230,6 @@ public class DesignManager : MonoBehaviour
 
         // ��ת����Ⱦ����
        // UnityEngine.SceneManagement.SceneManager.LoadScene("TieDyeScene");
-    }
-    
-    // 锁定设计区花纹，使其不可再变动
-    private void LockDesign()
-    {
-        isDesignLocked = true;
-        
-        if (designArea != null)
-        {
-            foreach (Transform child in designArea)
-            {
-                DraggablePattern pattern = child.GetComponent<DraggablePattern>();
-                if (pattern != null)
-                {
-                    // 禁用交互
-                    CanvasGroup canvasGroup = pattern.GetComponent<CanvasGroup>();
-                    if (canvasGroup != null)
-                    {
-                        canvasGroup.blocksRaycasts = false;
-                    }
-                    
-                    // 取消选中状态
-                    pattern.SetSelected(false);
-                }
-            }
-        }
-        
-        // 取消当前选中的花纹
-        SelectPattern(null);
-    }
-    
-    // 隐藏ClearButton通过缩放动画
-    private void HideClearButton()
-    {
-        if (clearButton != null)
-        {
-            RectTransform clearButtonRect = clearButton.GetComponent<RectTransform>();
-            if (clearButtonRect != null)
-            {
-                // 使用DOTween实现缩放消失动画
-                clearButtonRect.DOScale(Vector3.zero, 0.3f).OnComplete(() => {
-                    clearButton.gameObject.SetActive(false);
-                });
-            }
-        }
     }
 
     // �ռ�������ݣ����ֲ��䣩

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using DG.Tweening;
 
 /// <summary>
@@ -95,64 +94,80 @@ public class DesignUIAnimation : MonoBehaviour
         // 创建动画序列
         Sequence sequence = DOTween.Sequence();
         
-        // 根据点击次数执行不同的动画序列
+        // 第一步：同时移动PatternSelectionPanel、Toolbar和DesignArea
+        if (patternSelectionPanel != null)
+        {
+            // 使PatternSelectionPanel向左移动
+            float startX = patternSelectionPanel.localPosition.x;
+            float targetX = startX - panelMoveDistance;
+            Debug.Log($"patternSelectionPanel移动：从{startX:0.##}到{targetX:0.##}");
+            sequence.Join(patternSelectionPanel.DOLocalMoveX(targetX, animationDuration)
+                .SetEase(Ease.InOutQuad).OnComplete(() => Debug.Log("patternSelectionPanel动画完成")));
+        }
+        
+        if (toolbar != null)
+        {
+            // 使Toolbar向右移动消失
+            float startX = toolbar.localPosition.x;
+            float targetX = startX + toolbarMoveDistance;
+            Debug.Log($"toolbar移动：从{startX:0.##}到{targetX:0.##}");
+            sequence.Join(toolbar.DOLocalMoveX(targetX, animationDuration)
+                .SetEase(Ease.InOutQuad).OnComplete(() => Debug.Log("toolbar动画完成")));
+        }
+        
+        if (designArea != null)
+        {
+            // 使DesignArea向左移动50个单位
+            float startX = designArea.localPosition.x;
+            float targetX = startX - designAreaMoveDistance;
+            Debug.Log($"designArea移动：从{startX:0.##}到{targetX:0.##}");
+            sequence.Join(designArea.DOLocalMoveX(targetX, animationDuration)
+                .SetEase(Ease.InOutQuad).OnComplete(() => Debug.Log("designArea动画完成")));
+        }
+        
+        // 第二步：间隔0.1秒后，让IntroduceArea向左移动200个单位（动画持续0.8秒）
+        Debug.Log("开始等待0.1秒");
+        sequence.AppendInterval(0.1f).OnComplete(() => Debug.Log("等待完成，开始执行introduceArea动画"));
+        
+        if (introduceArea != null)
+        {
+            float startX = introduceArea.localPosition.x;
+            float targetX = startX - introduceAreaMoveDistance;
+            Debug.Log($"introduceArea移动：从{startX:0.##}到{targetX:0.##}");
+            sequence.Append(introduceArea.DOLocalMoveX(targetX, 0.8f)
+                .SetEase(Ease.InOutQuad).OnComplete(() => Debug.Log("introduceArea动画完成")));
+        }
+        
+        // 第三步：间隔1秒后，让IntroduceText从中心缩放出现
+        Debug.Log("开始等待0.3秒");
+        sequence.AppendInterval(0.3f).OnComplete(() => Debug.Log("等待完成，开始执行introduceText1动画"));
+        
+        // 根据点击次数执行不同的动画
         if (clickCount == 1)
         {
-            // 第一次点击：执行初始动画序列
-            if (patternSelectionPanel != null)
-            {
-                float startX = patternSelectionPanel.localPosition.x;
-                float targetX = startX - panelMoveDistance;
-                sequence.Join(patternSelectionPanel.DOLocalMoveX(targetX, animationDuration)
-                    .SetEase(Ease.InOutQuad));
-            }
-            
-            if (toolbar != null)
-            {
-                float startX = toolbar.localPosition.x;
-                float targetX = startX + toolbarMoveDistance;
-                sequence.Join(toolbar.DOLocalMoveX(targetX, animationDuration)
-                    .SetEase(Ease.InOutQuad));
-            }
-            
-            if (designArea != null)
-            {
-                float startX = designArea.localPosition.x;
-                float targetX = startX - designAreaMoveDistance;
-                sequence.Join(designArea.DOLocalMoveX(targetX, animationDuration)
-                    .SetEase(Ease.InOutQuad));
-            }
-            
-            // 第二步：间隔0.1秒后，让IntroduceArea向左移动
-            sequence.AppendInterval(0.1f);
-            
-            if (introduceArea != null)
-            {
-                float startX = introduceArea.localPosition.x;
-                float targetX = startX - introduceAreaMoveDistance;
-                sequence.Append(introduceArea.DOLocalMoveX(targetX, 0.8f)
-                    .SetEase(Ease.InOutQuad));
-            }
-            
-            // 第三步：间隔0.3秒后，让introduceText1从中心缩放出现
-            sequence.AppendInterval(0.3f);
-            
+            // 第一次点击时的动画
             if (introduceText1 != null)
             {
+                // 先确保文本初始为缩放为0状态
+                Debug.Log("设置introduceText1初始缩放到0");
                 introduceText1.localScale = Vector3.zero;
+                
+                // 执行从0到1的缩放动画（从中心缩放）
+                Debug.Log("执行introduceText1缩放动画");
                 sequence.Append(introduceText1.DOScale(Vector3.one, introduceTextScaleDuration)
-                    .SetEase(Ease.OutQuad));
+                    .SetEase(Ease.OutQuad).OnComplete(() => Debug.Log("introduceText1动画完成")));
             }
         }
         else if (clickCount == 2)
         {
-            // 第二次点击：执行特定的动画序列
+            Debug.Log("执行第二次点击的动画序列");
             
             // 第一步：introduceText1缩放消失
             if (introduceText1 != null)
             {
+                Debug.Log("执行introduceText1缩放消失动画");
                 sequence.Append(introduceText1.DOScale(Vector3.zero, introduceTextScaleDuration)
-                    .SetEase(Ease.InQuad));
+                    .SetEase(Ease.InQuad).OnComplete(() => Debug.Log("introduceText1缩放消失完成")));
             }
             
             // 第二步：introduceText2缩放出现
@@ -160,8 +175,9 @@ public class DesignUIAnimation : MonoBehaviour
             {
                 if (introduceText2 != null)
                 {
+                    Debug.Log("执行introduceText2缩放出现动画");
                     sequence.Join(introduceText2.DOScale(Vector3.one, introduceTextScaleDuration)
-                        .SetEase(Ease.OutQuad));
+                        .SetEase(Ease.OutQuad).OnComplete(() => Debug.Log("introduceText2缩放出现完成")));
                 }
             });
             
@@ -172,24 +188,14 @@ public class DesignUIAnimation : MonoBehaviour
                 {
                     float startY = plasticComponent.localPosition.y;
                     float targetY = startY - plasticMoveDistance;
+                    Debug.Log($"plasticComponent移动：从{startY:0.##}到{targetY:0.##}");
                     sequence.Join(plasticComponent.DOLocalMoveY(targetY, plasticMoveDuration)
-                        .SetEase(Ease.OutQuad));
+                        .SetEase(Ease.OutQuad).OnComplete(() => Debug.Log("plasticComponent移动完成")));
                 }
             });
         }
         
-        else if (clickCount == 3)
-        {
-            // 第三次点击：切换到DyeProduct场景
-            Debug.Log("第三次点击，切换到DyeProduct场景");
-            SceneManager.LoadScene("Assets/Scenes/Design/DyeProduct.unity");
-        }
-        
-        // 设置动画完成回调
-        sequence.OnComplete(() =>
-        {
-            Debug.Log($"第{clickCount}次点击的所有动画序列执行完成");
-        });
+        sequence.OnComplete(() => Debug.Log($"第{clickCount}次点击的所有动画序列执行完成"));
     }
     
     private void OnDestroy()
