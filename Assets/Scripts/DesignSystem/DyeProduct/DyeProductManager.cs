@@ -11,14 +11,18 @@ namespace DesignSystem.DyeProduct
         [SerializeField] private Button nextButton;
         [SerializeField] private GameObject banlanImagePrefab;
         [SerializeField] private GameObject limeImagePrefab;
-        [SerializeField] private GameObject hammerImagePrefab;
+        [SerializeField] private GameObject hammerImagePrefab; // HammerImage预制体引用
         [SerializeField] private Transform canvasTransform;
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip pourWaterClip;
+        [SerializeField] private AudioClip beatClip; // 锤子音效
         [SerializeField] private GameObject bucketEmptyObject; // 空桶对象引用
+        [SerializeField] private GameObject bucketMixObject; // 混合桶对象引用
         [SerializeField] private GameObject banlanObject; // Banlan对象引用
         [SerializeField] private GameObject limeObject; // Lime对象引用
         [SerializeField] private GameObject hammerObject; // Hammer对象引用
+        [SerializeField] private GameObject bubbleObject; // Bubble对象引用
+        [SerializeField] private GameObject rawmaterialsIntroduce; // 原材料介绍对象引用
 
         [Header("Settings")]
         [SerializeField] private float totalEffectDuration = 1.0f; // 总效果持续时间
@@ -34,12 +38,28 @@ namespace DesignSystem.DyeProduct
         private float fadeOutDuration;
         private Coroutine audioPlayCoroutine;
         private Coroutine bucketFadeCoroutine;
+        private Coroutine bucketMixFadeCoroutine; // 混合桶渐变协程引用
         private Coroutine banlanMoveCoroutine;
         private Coroutine limeMoveCoroutine;
         private Coroutine hammerMoveCoroutine;
+        private Coroutine bubbleMoveCoroutine; // 气泡移动协程引用
+        private Coroutine rawmaterialsIntroduceMoveCoroutine; // 原材料介绍移动协程引用
+        private int nextButtonClickCount = 0; // 下一个按钮的点击次数计数
+        private Coroutine hammerAnimationCoroutine; // 锤子动画协程引用
 
         private void Awake()
         {
+            // 初始化协程引用
+            hammerAnimationCoroutine = null;
+            bucketFadeCoroutine = null;
+            bucketMixFadeCoroutine = null;
+            audioPlayCoroutine = null;
+            banlanMoveCoroutine = null;
+            limeMoveCoroutine = null;
+            hammerMoveCoroutine = null;
+            bubbleMoveCoroutine = null;
+            rawmaterialsIntroduceMoveCoroutine = null;
+            
             // 计算渐显渐隐持续时间
             fadeInDuration = totalEffectDuration * fadeInPercentage;
             fadeOutDuration = totalEffectDuration - fadeInDuration;
@@ -158,29 +178,427 @@ namespace DesignSystem.DyeProduct
         }
 
         private void OnDisable()
-        {
-            // 移除按钮点击事件监听
+        {    // 移除按钮点击事件监听
             if (nextButton != null)
             {
                 nextButton.onClick.RemoveListener(OnNextButtonClicked);
             }
+            
+            // 停止所有协程
+            StopAllCoroutines();
+            
+            // 重置协程引用
+            hammerAnimationCoroutine = null;
+            bucketFadeCoroutine = null;
+            bucketMixFadeCoroutine = null;
+            audioPlayCoroutine = null;
+            banlanMoveCoroutine = null;
+            limeMoveCoroutine = null;
+            hammerMoveCoroutine = null;
+            bubbleMoveCoroutine = null;
+            
+            // 重置点击计数
+            nextButtonClickCount = 0;
         }
 
         private void OnNextButtonClicked()
-        {    // 播放倒水音效
+        {    // 增加点击次数
+            nextButtonClickCount++;
+            Debug.Log($"NextButton clicked {nextButtonClickCount} times");
+            
+            // 播放倒水音效
             PlayPourWaterSound();
             
             // 开始桶的透明度过渡
             StartBucketFadeOut();
             
-            // 实例化预制体并添加渐显渐隐效果
-            StartCoroutine(ShowAndHidePrefabs());
+            // 根据点击次数执行不同的操作
+            if (nextButtonClickCount == 1)
+            {    // 第一次点击 - 原有的逻辑
+                // 实例化预制体并添加渐显渐隐效果
+                StartCoroutine(ShowAndHidePrefabs());
+                
+                // 开始Banlan和Lime的移动
+                StartBanlanLimeMovement();
+                
+                // 延迟后开始Hammer的移动
+                StartCoroutine(StartHammerMovementWithDelay());
+            }
+            else if (nextButtonClickCount == 2)
+            {    // 第二次点击 - 新的锤子动画逻辑
+                StartHammerAnimationSequence();
+            }
+        }
+        
+        private void StartHammerAnimationSequence()
+        {    // 停止现有的锤子动画协程
+            if (hammerAnimationCoroutine != null)
+            {    StopCoroutine(hammerAnimationCoroutine);
+                hammerAnimationCoroutine = null;
+            }
             
-            // 开始Banlan和Lime的移动
-            StartBanlanLimeMovement();
+            // 播放锤子音效（持续2秒）
+            PlayBeatSound();
             
-            // 延迟后开始Hammer的移动
-            StartCoroutine(StartHammerMovementWithDelay());
+            // 在第二次点击时，将Bucket_mix的透明度调为0，持续1秒
+            FadeBucketMixToZero();
+            
+            // 锤子向左平移1000单位，持续1秒
+            if (hammerObject != null)
+            {
+                Debug.Log("Starting hammer movement to the left by 1000 units over 1 second");
+                // 停止现有的锤子移动协程
+                if (hammerMoveCoroutine != null)
+                {
+                    StopCoroutine(hammerMoveCoroutine);
+                    hammerMoveCoroutine = null;
+                }
+                
+                // 向左平移1000单位（负值表示向左）
+                float hammerMoveDuration = 1.0f; // 持续1秒
+                hammerMoveCoroutine = StartCoroutine(MoveObject(hammerObject, new Vector3(-1000f, 0, 0), hammerMoveDuration));
+            }
+            
+            // 0.5秒延迟后气泡向右平移800单位，持续1秒
+            if (bubbleObject != null)
+            {
+                Debug.Log("Starting bubble movement after 0.5s delay, moving right by 900 units over 1 second");
+                // 停止现有的气泡移动协程
+                if (bubbleMoveCoroutine != null)
+                {
+                    StopCoroutine(bubbleMoveCoroutine);
+                    bubbleMoveCoroutine = null;
+                }
+                
+                float delay = 0.5f; // 延迟0.5秒
+                float bubbleMoveDuration = 1.0f; // 持续1秒
+                bubbleMoveCoroutine = StartCoroutine(DelayedBubbleMovement(delay, bubbleMoveDuration));
+            }
+            
+            // 原材料介绍向左平移1000单位，持续1秒
+            if (rawmaterialsIntroduce != null)
+            {
+                Debug.Log("Starting rawmaterialsIntroduce movement, moving left by 1000 units over 1 second");
+                // 停止现有的原材料介绍移动协程
+                if (rawmaterialsIntroduceMoveCoroutine != null)
+                {
+                    StopCoroutine(rawmaterialsIntroduceMoveCoroutine);
+                    rawmaterialsIntroduceMoveCoroutine = null;
+                }
+                
+                float delay = 0f; // 无延迟，立即开始
+                float rawmaterialsIntroduceMoveDuration = 1.0f; // 持续1秒
+                rawmaterialsIntroduceMoveCoroutine = StartCoroutine(DelayedRawmaterialsIntroduceMovement(delay, rawmaterialsIntroduceMoveDuration));
+            }
+            
+            // 开始新的锤子动画协程
+            hammerAnimationCoroutine = StartCoroutine(ShowHammerPrefab());
+        }
+        
+        private void FadeBucketMixToZero()
+        {    Debug.Log("Starting to fade Bucket_mix to zero opacity for 1 second");
+            StartCoroutine(FadeBucketMixToZeroCoroutine());
+        }
+        
+        // 延迟后气泡移动协程
+        private IEnumerator DelayedBubbleMovement(float delay, float duration)
+        {    // 等待指定的延迟时间
+            yield return new WaitForSeconds(delay);
+            
+            // 验证气泡对象引用
+            if (bubbleObject != null)
+            {    Debug.Log("Bubble movement started after delay");
+                // 向右平移800单位（正值表示向右）
+                yield return StartCoroutine(MoveObject(bubbleObject, new Vector3(900f, 0, 0), duration));
+            }
+            else
+            {    Debug.LogWarning("Bubble object reference is null, cannot move.");
+            }
+        }
+        
+        private IEnumerator DelayedRawmaterialsIntroduceMovement(float delay, float duration)
+        {
+            // 等待指定的延迟时间
+            yield return new WaitForSeconds(delay);
+            
+            // 验证原材料介绍对象引用
+            if (rawmaterialsIntroduce != null)
+            {
+                Debug.Log("RawmaterialsIntroduce movement started after delay: moving left by 1000 units");
+                // 向左平移1000单位（负值表示向左）
+                yield return StartCoroutine(MoveObject(rawmaterialsIntroduce, new Vector3(-1000f, 0, 0), duration));
+            }
+            else
+            {
+                Debug.LogWarning("RawmaterialsIntroduce object reference is null, cannot move.");
+            }
+        }
+        
+        private IEnumerator FadeBucketMixToZeroCoroutine()
+        {    if (bucketMixObject == null)
+            {    Debug.LogWarning("Cannot fade bucket mix - bucketMixObject reference is null!");
+                yield break;
+            }
+            
+            // 保存初始透明度
+            float startAlpha = 1.0f;
+            SpriteRenderer[] renderers = bucketMixObject.GetComponentsInChildren<SpriteRenderer>(true);
+            Image[] images = bucketMixObject.GetComponentsInChildren<Image>(true);
+            
+            // 检查是否有可设置透明度的组件
+            if (renderers.Length == 0 && images.Length == 0)
+            {    Debug.LogWarning("No SpriteRenderer or Image components found on BucketMixObject! Cannot apply fade effect.");
+                yield break;
+            }
+            
+            // 记录找到的组件数量用于调试
+            Debug.Log($"Starting bucket mix fade effect: {renderers.Length} SpriteRenderers, {images.Length} Images found");
+            
+            float fadeDuration = 1.0f; // 持续1秒
+            float elapsedTime = 0f;
+            
+            // 执行透明度渐变到0
+            while (elapsedTime < fadeDuration)
+            {    float t = elapsedTime / fadeDuration;
+                float currentAlpha = Mathf.Lerp(startAlpha, 0f, t);
+                
+                // 设置所有SpriteRenderer的透明度
+                foreach (SpriteRenderer renderer in renderers)
+                {    if (renderer != null)
+                    {    Color color = renderer.color;
+                        color.a = currentAlpha;
+                        renderer.color = color;
+                    }
+                }
+                
+                // 设置所有Image的透明度
+                foreach (Image image in images)
+                {    if (image != null)
+                    {    Color color = image.color;
+                        color.a = currentAlpha;
+                        image.color = color;
+                    }
+                }
+                
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            
+            // 确保最终透明度为0
+            foreach (SpriteRenderer renderer in renderers)
+            {    if (renderer != null)
+                {    Color color = renderer.color;
+                    color.a = 0f;
+                    renderer.color = color;
+                }
+            }
+            
+            foreach (Image image in images)
+            {    if (image != null)
+                {    Color color = image.color;
+                    color.a = 0f;
+                    image.color = color;
+                }
+            }
+            
+            Debug.Log("Bucket mix fade effect to zero opacity completed successfully");
+        }
+        
+        private void PlayBeatSound()
+        {    // 如果有正在播放的音频协程，停止它
+            if (audioPlayCoroutine != null)
+            {    StopCoroutine(audioPlayCoroutine);
+            }
+            
+            // 启动新的音频播放协程，播放beat.wav
+            audioPlayCoroutine = StartCoroutine(PlayBeatAudioForDuration());
+        }
+        
+        private IEnumerator PlayBeatAudioForDuration()
+        {    // 如果没有音频剪辑，尝试加载
+            if (beatClip == null)
+            {    // 尝试从Resources文件夹加载
+                beatClip = Resources.Load<AudioClip>("beat");
+                
+                // 如果Resources中也没有，尝试直接从Assets/Audio文件夹加载（仅编辑器模式）
+                #if UNITY_EDITOR
+                if (beatClip == null)
+                {    string audioPath = "Assets/Audio/beat.wav";
+                    Debug.Log("Attempting to load audio clip from: " + audioPath);
+                    UnityEditor.AssetDatabase.Refresh();
+                    beatClip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(audioPath);
+                }
+                #endif
+                
+                if (beatClip == null)
+                {    Debug.LogError("Failed to load beat audio clip!");
+                    yield break;
+                }
+            }
+            
+            // 设置音频剪辑并播放
+            audioSource.clip = beatClip;
+            audioSource.loop = false;
+            audioSource.Play();
+            
+            // 等待指定的播放时长（2秒）
+            float duration = 2.0f; // 硬性设置为2秒，符合需求
+            yield return new WaitForSeconds(duration);
+            
+            // 停止播放
+            if (audioSource.isPlaying)
+            {    audioSource.Stop();
+            }
+            
+            audioPlayCoroutine = null;
+        }
+        
+        private IEnumerator ShowHammerPrefab()
+        {    Debug.Log("Starting hammer animation sequence for second button click");
+            
+            // 实例化Hammer预制体
+            GameObject hammerInstance = null;
+            RectTransform rectTransform = null;
+            bool initialized = false;
+            Quaternion startRotation = Quaternion.identity;
+            Quaternion rotation90 = Quaternion.identity;
+            float rotationDuration = 0f;
+            
+            // 参数验证和初始化 - 非yield部分
+            try
+            {    if (hammerImagePrefab != null)
+                {    Debug.Log("Creating HammerImagePrefab instance from inspector reference");
+                    hammerInstance = Instantiate(hammerImagePrefab, canvasTransform);
+                    hammerInstance.transform.localPosition = Vector3.zero;
+                    hammerInstance.transform.localScale = Vector3.one;
+                    hammerInstance.transform.localRotation = Quaternion.identity;
+                }
+                else
+                {    Debug.LogWarning("HammerImagePrefab reference is missing, attempting to load from resources");
+                    hammerInstance = CreatePrefabInstance("HammerImage");
+                }
+                
+                if (hammerInstance == null)
+                {    Debug.LogError("Failed to create HammerImage instance: both inspector reference and resource loading failed");
+                }
+                else
+                {    Debug.Log($"Hammer instance created successfully: {hammerInstance.name}");
+                    
+                    // 获取RectTransform组件
+                    rectTransform = hammerInstance.GetComponent<RectTransform>();
+                    if (rectTransform == null)
+                    {    Debug.LogWarning("Hammer instance does not have RectTransform component, using Transform instead");
+                    }
+                    else
+                    {    // 验证动画参数
+                        if (fadeInDuration <= 0)
+                        {    Debug.LogWarning("FadeInDuration is invalid, setting to default 0.3s");
+                            fadeInDuration = 0.3f;
+                        }
+                        
+                        if (fadeOutDuration <= 0)
+                        {    Debug.LogWarning("FadeOutDuration is invalid, setting to default 0.3s");
+                            fadeOutDuration = 0.3f;
+                        }
+                        
+                        // 设置初始透明度为0
+                        FadeEffect.SetAlphaRecursive(hammerInstance, 0f);
+                        Debug.Log("Initial alpha set to 0, preparing for fade-in");
+                        
+                        // 初始化旋转参数
+                        startRotation = rectTransform.localRotation;
+                        rotation90 = Quaternion.Euler(0, 0, 90);
+                        rotationDuration = 1f / 4f; // 每次旋转1/4秒
+                        
+                        initialized = true;
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {    Debug.LogError($"Exception occurred during initialization: {e.Message}\n{e.StackTrace}");
+            }
+            
+            // 如果初始化失败，销毁实例并退出
+            if (!initialized || hammerInstance == null || rectTransform == null)
+            {    if (hammerInstance != null)
+                {    Debug.Log("Cleaning up hammer instance due to initialization failure");
+                    Destroy(hammerInstance);
+                }
+                hammerAnimationCoroutine = null;
+                Debug.Log("Hammer animation coroutine reference cleared");
+                yield break;
+            }
+            
+            // 渐显效果 - 现在在try-catch外执行yield
+            Debug.Log($"Starting fade-in effect with duration: {fadeInDuration}s");
+            yield return StartCoroutine(FadeEffect.Fade(hammerInstance, 0f, 1f, fadeInDuration));
+            Debug.Log("Fade-in effect completed");
+            
+            // 实现两次往复旋转90度（持续1秒）
+            Debug.Log("Starting rotation sequence (total 1 second duration)");
+            
+            // 第一次旋转90度
+            Debug.Log("First rotation: 0° -> 90°");
+            yield return StartCoroutine(RotateObject(rectTransform, startRotation, rotation90, rotationDuration));
+            
+            // 第二次旋转回原位
+            Debug.Log("Second rotation: 90° -> 0°");
+            yield return StartCoroutine(RotateObject(rectTransform, rotation90, startRotation, rotationDuration));
+            
+            // 第三次旋转90度
+            Debug.Log("Third rotation: 0° -> 90°");
+            yield return StartCoroutine(RotateObject(rectTransform, startRotation, rotation90, rotationDuration));
+            
+            // 第四次旋转回原位
+            Debug.Log("Fourth rotation: 90° -> 0°");
+            yield return StartCoroutine(RotateObject(rectTransform, rotation90, startRotation, rotationDuration));
+            
+            Debug.Log("Rotation sequence completed");
+            
+            // 渐隐效果
+            Debug.Log($"Starting fade-out effect with duration: {fadeOutDuration}s");
+            yield return StartCoroutine(FadeEffect.Fade(hammerInstance, 1f, 0f, fadeOutDuration));
+            Debug.Log("Fade-out effect completed");
+            
+            // 延迟一帧再销毁，确保视觉效果完成
+            yield return null;
+            
+            // 销毁实例
+            if (hammerInstance != null)
+            {    Debug.Log($"Destroying hammer instance: {hammerInstance.name}");
+                Destroy(hammerInstance);
+            }
+            
+            hammerAnimationCoroutine = null;
+            Debug.Log("Hammer animation coroutine reference cleared");
+        }
+        
+        // 旋转对象的协程
+        private IEnumerator RotateObject(RectTransform target, Quaternion startRotation, Quaternion endRotation, float duration)
+        {
+            if (target == null)
+            {
+                Debug.LogWarning("Cannot rotate null RectTransform");
+                yield break;
+            }
+            
+            if (duration <= 0)
+            {
+                target.localRotation = endRotation;
+                yield break;
+            }
+            
+            float elapsedTime = 0f;
+            
+            while (elapsedTime < duration)
+            {
+                float progress = elapsedTime / duration;
+                target.localRotation = Quaternion.Slerp(startRotation, endRotation, progress);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            
+            target.localRotation = endRotation;
         }
         
         private void StartBanlanLimeMovement()
@@ -415,6 +833,10 @@ namespace DesignSystem.DyeProduct
             {                Debug.LogWarning("BucketEmptyObject reference is missing! Please assign it in the Inspector.");
             }
             
+            if (bucketMixObject == null)
+            {                Debug.LogWarning("BucketMixObject reference is missing! Please assign it in the Inspector.");
+            }
+            
             // 确保桶透明度过渡时间有效
             if (bucketFadeOutDuration <= 0)
             {                Debug.LogWarning("Bucket fade out duration must be positive. Setting to default 1.0s.");
@@ -555,6 +977,18 @@ namespace DesignSystem.DyeProduct
             if (hammerObject == null)
             {
                 Debug.LogWarning("HammerObject reference is missing! Please assign it in the Inspector.");
+            }
+            
+            // 验证Bubble对象引用
+            if (bubbleObject == null)
+            {
+                Debug.LogWarning("BubbleObject reference is missing! Please assign it in the Inspector.");
+            }
+            
+            // 验证原材料介绍对象引用
+            if (rawmaterialsIntroduce == null)
+            {
+                Debug.LogWarning("RawmaterialsIntroduce reference is missing! Please assign it in the Inspector.");
             }
             
             // 确保移动参数有效
