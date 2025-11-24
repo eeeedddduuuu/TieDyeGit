@@ -667,7 +667,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5cf84e4b7f2dd42b587844b4e73913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fabricManager: {fileID: 0}
 --- !u!1 &159833992
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,7 +889,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &305910956
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1243,22 +1242,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3558fdca51d190146bcbcf7a93ffe21a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDuration: 0.5
-  scaleDuration: 0.5
-  introduceDuration: 1
-  moveEaseType: 6
-  scaleEaseType: 6
-  introduceEaseType: 24
-  targetScale: 1.5
-  targetPosition: {x: 0, y: 0, z: 0}
-  autoCalculateCenter: 1
-  enlargedSiblingIndex: 100
-  originalSiblingIndex: 0
-  originalPosition: {x: 0, y: 0, z: 0}
-  originalScale: {x: 0, y: 0, z: 0}
-  introduceTransform: {fileID: 0}
-  originalIntroduceScale: {x: 0, y: 0, z: 0}
-  isEnlarged: 0
 --- !u!114 &360953528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1271,7 +1254,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5cf84e4b7f2dd42b587844b4e73913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fabricManager: {fileID: 0}
 --- !u!114 &360953529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2376,7 +2358,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &573823893
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2847,7 +2829,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5cf84e4b7f2dd42b587844b4e73913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fabricManager: {fileID: 0}
 --- !u!114 &731720879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2860,22 +2841,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3558fdca51d190146bcbcf7a93ffe21a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDuration: 0.5
-  scaleDuration: 0.5
-  introduceDuration: 1
-  moveEaseType: 6
-  scaleEaseType: 6
-  introduceEaseType: 24
-  targetScale: 1.5
-  targetPosition: {x: 0, y: 0, z: 0}
-  autoCalculateCenter: 1
-  enlargedSiblingIndex: 100
-  originalSiblingIndex: 0
-  originalPosition: {x: 0, y: 0, z: 0}
-  originalScale: {x: 0, y: 0, z: 0}
-  introduceTransform: {fileID: 0}
-  originalIntroduceScale: {x: 0, y: 0, z: 0}
-  isEnlarged: 0
 --- !u!1 &746481819
 GameObject:
   m_ObjectHideFlags: 0
@@ -3193,12 +3158,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 588a5d2e4a0c1464c86e376a392144f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fabricCanvas: {fileID: 1207505883}
-  fabricElementNames:
-  - mian
-  - ma
-  - si
-  - rong
 --- !u!1 &851356811
 GameObject:
   m_ObjectHideFlags: 0
@@ -3565,7 +3524,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5cf84e4b7f2dd42b587844b4e73913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fabricManager: {fileID: 0}
 --- !u!1 &925560742
 GameObject:
   m_ObjectHideFlags: 0
@@ -3577,6 +3535,7 @@ GameObject:
   - component: {fileID: 925560745}
   - component: {fileID: 925560744}
   - component: {fileID: 925560743}
+  - component: {fileID: 925560746}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3631,6 +3590,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &925560746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925560742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b02b5e6416bab534c8b791a3b55ec4d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvases:
+  - {fileID: 1207505882}
+  - {fileID: 305910959}
+  - {fileID: 573823896}
+  - {fileID: 1326186738}
+  previousButton: {fileID: 1672107340}
+  nextButton: {fileID: 1744950}
 --- !u!1 &943859007
 GameObject:
   m_ObjectHideFlags: 0
@@ -4048,7 +4026,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1207505880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4310,7 +4288,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1326186735
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4710,22 +4688,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3558fdca51d190146bcbcf7a93ffe21a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDuration: 0.5
-  scaleDuration: 0.5
-  introduceDuration: 1
-  moveEaseType: 6
-  scaleEaseType: 6
-  introduceEaseType: 24
-  targetScale: 1.5
-  targetPosition: {x: 0, y: 0, z: 0}
-  autoCalculateCenter: 1
-  enlargedSiblingIndex: 100
-  originalSiblingIndex: 0
-  originalPosition: {x: 0, y: 0, z: 0}
-  originalScale: {x: 0, y: 0, z: 0}
-  introduceTransform: {fileID: 0}
-  originalIntroduceScale: {x: 0, y: 0, z: 0}
-  isEnlarged: 0
 --- !u!114 &1818408280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4738,7 +4700,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5cf84e4b7f2dd42b587844b4e73913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fabricManager: {fileID: 0}
 --- !u!114 &1818408281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5065,7 +5026,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5cf84e4b7f2dd42b587844b4e73913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fabricManager: {fileID: 0}
 --- !u!1 &2063120115
 GameObject:
   m_ObjectHideFlags: 0
