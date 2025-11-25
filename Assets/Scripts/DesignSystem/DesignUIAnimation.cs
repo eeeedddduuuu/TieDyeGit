@@ -98,7 +98,7 @@ public class DesignUIAnimation : MonoBehaviour
         // 第三次点击直接处理场景切换，不执行任何UI动画
         if (clickCount == 3)
         {
-            Debug.Log("执行第三次点击，准备切换到DyeProduct场景");
+            Debug.Log("执行第三次点击，准备切换到test场景");
             
             // 延迟一小段时间，然后切换场景
             sequence.AppendInterval(0.2f);
@@ -106,8 +106,8 @@ public class DesignUIAnimation : MonoBehaviour
             {
                 try
                 {
-                    Debug.Log("正在加载DyeProduct场景");
-                    SceneManager.LoadScene("Assets/Scenes/Design/DyeProduct.unity");
+                    Debug.Log("正在加载test场景");
+                    SceneManager.LoadScene("Assets/Scenes/Design/test.unity");
                 }
                 catch (System.Exception e)
                 {

@@ -6,11 +6,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [Header("ÓÎÏ·×´Ì¬")]
-    public List<PatternData> draftDesign; // ±£´æµ×¸åÉè¼ÆÊı¾İ
-    public bool dyeReady = false; // È¾ÁÏÊÇ·ñ×¼±¸ºÃ
+    [Header("ï¿½ï¿½Ï·×´Ì¬")]
+    public List<PatternData> draftDesign; // ï¿½ï¿½ï¿½ï¿½×¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public bool dyeReady = false; // È¾ï¿½ï¿½ï¿½Ç·ï¿½×¼ï¿½ï¿½ï¿½ï¿½
 
-    // Éè¼ÆÊı¾İÀà£¨ĞèÒªÔÚGameManagerÖĞÖØĞÂ¶¨Òå£¬»òÕßÊ¹ÓÃDraftDesignManagerÖĞµÄ¶¨Òå£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¨ï¿½ï¿½Òªï¿½ï¿½GameManagerï¿½ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½DraftDesignManagerï¿½ĞµÄ¶ï¿½ï¿½å£©
     [System.Serializable]
     public class PatternData
     {
@@ -21,20 +21,26 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        // ä¿®å¤åœºæ™¯è·³è½¬æ—¶GameManageræ— æ³•æ­£å¸¸è¿è¡Œçš„é—®é¢˜
+        // æ£€æŸ¥æ˜¯å¦å·²æœ‰å®ä¾‹
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            Debug.Log("GameManager: åˆ›å»ºæ–°å®ä¾‹å¹¶ä¿æŒä¸é”€æ¯");
         }
         else
         {
-            Destroy(gameObject);
+            // ä¸é”€æ¯æ–°åœºæ™¯ä¸­çš„GameManagerï¼Œè€Œæ˜¯å°†æ•°æ®åˆå¹¶
+            // è¿™æ ·å¯ä»¥ä¿ç•™æ–°åœºæ™¯ä¸­GameManagerçš„è®¾ç½®å’Œå¼•ç”¨
+            Debug.Log("GameManager: å·²æœ‰å®ä¾‹ï¼Œä¿ç•™å½“å‰å®ä¾‹");
+            // å¯ä»¥åœ¨è¿™é‡Œæ·»åŠ æ•°æ®åˆå¹¶é€»è¾‘
         }
     }
 
     
 
-    // »ñÈ¡±£´æµÄÉè¼ÆÊı¾İ
+    // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public List<PatternData> GetSavedDesign()
     {
         return draftDesign;
