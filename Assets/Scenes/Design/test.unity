@@ -770,6 +770,7 @@ GameObject:
   - component: {fileID: 92269232}
   - component: {fileID: 92269231}
   - component: {fileID: 92269230}
+  - component: {fileID: 92269233}
   m_Layer: 5
   m_Name: HammerCanvas
   m_TagString: Untagged
@@ -862,6 +863,40 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &92269233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 92269228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488e9c04c5718a7449da61a8474a790b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationType: 0
+  autoPlayOnEnable: 1
+  useStaggeredAnimation: 1
+  staggerDelay: 0.05
+  animationDuration: 0.5
+  startDelay: 0
+  scaleEase: 27
+  fadeEase: 1
+  slideEase: 6
+  scaleFrom: 0.48
+  useDifferentAxisScales: 0
+  scaleFromX: 0.8
+  scaleFromY: 0.8
+  fadeFrom: 0
+  slideDirection: {x: 0, y: 50}
+  slideDistance: 50
+  elementsToAnimate: []
+  includeAllChildElements: 0
+  recursiveSearch: 1
+  excludeElements:
+  - {fileID: 1522175559}
+  - {fileID: 410419541}
 --- !u!1 &117032109
 GameObject:
   m_ObjectHideFlags: 0
@@ -1895,7 +1930,6 @@ GameObject:
   - component: {fileID: 447974177}
   - component: {fileID: 447974176}
   - component: {fileID: 447974175}
-  - component: {fileID: 447974174}
   - component: {fileID: 447974173}
   - component: {fileID: 447974172}
   m_Layer: 5
@@ -1951,50 +1985,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5cf84e4b7f2dd42b587844b4e73913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &447974174
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 447974170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 447974176}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &447974175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3448,6 +3438,7 @@ GameObject:
   - component: {fileID: 861464543}
   - component: {fileID: 861464542}
   - component: {fileID: 861464541}
+  - component: {fileID: 861464544}
   m_Layer: 5
   m_Name: FinishCanvas
   m_TagString: Untagged
@@ -3540,6 +3531,40 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &861464544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861464539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488e9c04c5718a7449da61a8474a790b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationType: 0
+  autoPlayOnEnable: 1
+  useStaggeredAnimation: 1
+  staggerDelay: 0.05
+  animationDuration: 0.5
+  startDelay: 0
+  scaleEase: 27
+  fadeEase: 1
+  slideEase: 6
+  scaleFrom: 0.8
+  useDifferentAxisScales: 0
+  scaleFromX: 0.8
+  scaleFromY: 0.8
+  fadeFrom: 0
+  slideDirection: {x: 0, y: 50}
+  slideDistance: 50
+  elementsToAnimate:
+  - {fileID: 1506642995}
+  - {fileID: 685054813}
+  includeAllChildElements: 0
+  recursiveSearch: 1
+  excludeElements: []
 --- !u!1 &877843181
 GameObject:
   m_ObjectHideFlags: 0
@@ -3656,6 +3681,7 @@ GameObject:
   - component: {fileID: 913073736}
   - component: {fileID: 913073735}
   - component: {fileID: 913073734}
+  - component: {fileID: 913073737}
   m_Layer: 5
   m_Name: BubbleCanvas
   m_TagString: Untagged
@@ -3748,6 +3774,40 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &913073737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 913073732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488e9c04c5718a7449da61a8474a790b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationType: 0
+  autoPlayOnEnable: 1
+  useStaggeredAnimation: 1
+  staggerDelay: 0.05
+  animationDuration: 0.5
+  startDelay: 0
+  scaleEase: 27
+  fadeEase: 1
+  slideEase: 6
+  scaleFrom: 0.8
+  useDifferentAxisScales: 0
+  scaleFromX: 0.8
+  scaleFromY: 0.8
+  fadeFrom: 0
+  slideDirection: {x: 0, y: 50}
+  slideDistance: 50
+  elementsToAnimate:
+  - {fileID: 1951848856}
+  - {fileID: 1442514410}
+  includeAllChildElements: 0
+  recursiveSearch: 1
+  excludeElements: []
 --- !u!1 &939143906
 GameObject:
   m_ObjectHideFlags: 0
@@ -4399,7 +4459,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19231042, g: 0.20979726, b: 0.3490566, a: 1}
+  m_Color: {r: 0.5439658, g: 0.56504095, b: 0.754717, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4820,7 +4880,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1353761326
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6649,6 +6709,7 @@ GameObject:
   - component: {fileID: 1743790966}
   - component: {fileID: 1743790965}
   - component: {fileID: 1743790964}
+  - component: {fileID: 1743790967}
   m_Layer: 5
   m_Name: TuoJiangCanvas
   m_TagString: Untagged
@@ -6741,6 +6802,40 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1743790967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743790962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488e9c04c5718a7449da61a8474a790b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationType: 0
+  autoPlayOnEnable: 1
+  useStaggeredAnimation: 1
+  staggerDelay: 0.05
+  animationDuration: 0.5
+  startDelay: 0
+  scaleEase: 27
+  fadeEase: 1
+  slideEase: 6
+  scaleFrom: 0.8
+  useDifferentAxisScales: 0
+  scaleFromX: 0.8
+  scaleFromY: 0.8
+  fadeFrom: 0
+  slideDirection: {x: 0, y: 50}
+  slideDistance: 50
+  elementsToAnimate:
+  - {fileID: 447974171}
+  - {fileID: 1205292332}
+  includeAllChildElements: 0
+  recursiveSearch: 1
+  excludeElements: []
 --- !u!1 &1793507581
 GameObject:
   m_ObjectHideFlags: 0
@@ -6784,6 +6879,11 @@ MonoBehaviour:
   - {fileID: 1353761329}
   previousButton: {fileID: 1996843947}
   nextButton: {fileID: 1710574208}
+  fadeDuration: 0.3
+  slideDuration: 0.3
+  fadeEase: 11
+  slideEase: 6
+  slideDistance: 100
 --- !u!114 &1793507583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7039,6 +7139,7 @@ GameObject:
   - component: {fileID: 1911403499}
   - component: {fileID: 1911403498}
   - component: {fileID: 1911403497}
+  - component: {fileID: 1911403500}
   m_Layer: 5
   m_Name: PlantCanvas
   m_TagString: Untagged
@@ -7133,6 +7234,42 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1911403500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911403495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488e9c04c5718a7449da61a8474a790b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationType: 0
+  autoPlayOnEnable: 1
+  useStaggeredAnimation: 1
+  staggerDelay: 0.05
+  animationDuration: 0.5
+  startDelay: 0
+  scaleEase: 27
+  fadeEase: 1
+  slideEase: 6
+  scaleFrom: 0.8
+  useDifferentAxisScales: 0
+  scaleFromX: 0.8
+  scaleFromY: 0.8
+  fadeFrom: 0
+  slideDirection: {x: 0, y: 50}
+  slideDistance: 50
+  elementsToAnimate:
+  - {fileID: 2132629448}
+  - {fileID: 81256838}
+  - {fileID: 851213860}
+  - {fileID: 1937930163}
+  includeAllChildElements: 0
+  recursiveSearch: 1
+  excludeElements: []
 --- !u!1 &1926734624
 GameObject:
   m_ObjectHideFlags: 0
