@@ -242,15 +242,14 @@ namespace DesignSystem.DyeProduct
             nextButtonClickCount++;
             Debug.Log($"NextButton clicked {nextButtonClickCount} times");
             
-            // 播放倒水音效
-            PlayPourWaterSound();
-            
             // 开始桶的透明度过渡
             StartBucketFadeOut();
             
             // 根据点击次数执行不同的操作
             if (nextButtonClickCount == 1)
             {    // 第一次点击 - 原有的逻辑
+                // 播放倒水音效
+                PlayPourWaterSound();
                 // 实例化预制体并添加渐显渐隐效果
                 StartCoroutine(ShowAndHidePrefabs());
                 
@@ -262,6 +261,8 @@ namespace DesignSystem.DyeProduct
             }
             else if (nextButtonClickCount == 2)
             {    // 第二次点击 - 新的锤子动画逻辑
+                // 播放倒水音效
+                PlayPourWaterSound();
                 StartHammerAnimationSequence();
             }
             else if (nextButtonClickCount == 3)
