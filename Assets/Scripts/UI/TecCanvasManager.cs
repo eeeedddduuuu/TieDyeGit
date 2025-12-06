@@ -110,9 +110,12 @@ public class TecCanvasManager : MonoBehaviour
     /// <param name="index">点击的一级子元素索引</param>
     private void OnFirstLevelElementClick(int index)
     {
+        // 播放一级子元素的点击动画
+        PlayFirstLevelClickAnimation(index);
+        
         if (index == currentSecondLevelIndex)
         {
-            // 如果点击的是当前显示的一级子元素，不做任何操作
+            // 如果点击的是当前显示的一级子元素，只播放动画，不切换二级子元素
             return;
         }
         
@@ -124,6 +127,33 @@ public class TecCanvasManager : MonoBehaviour
         
         // 更新当前显示索引
         currentSecondLevelIndex = index;
+    }
+    
+    /// <summary>
+    /// 播放一级子元素的点击动画
+    /// </summary>
+    /// <param name="index">一级子元素索引</param>
+    private void PlayFirstLevelClickAnimation(int index)
+    {
+        if (index < 0 || index >= firstLevelElements.Count)
+        {
+            Debug.LogWarning("无效的一级子元素索引: " + index);
+            return;
+        }
+        
+        Transform firstLevelElement = firstLevelElements[index];
+        
+        // 保存原始缩放值
+        Vector3 originalScale = firstLevelElement.localScale;
+        
+        // 使用DOTween播放点击动画：先缩小，再恢复原始大小
+        firstLevelElement.DOScale(originalScale * 0.9f, 0.15f)
+            .SetEase(Ease.InQuad)
+            .OnComplete(() => 
+            {
+                firstLevelElement.DOScale(originalScale, 0.15f)
+                    .SetEase(Ease.OutQuad);
+            });
     }
     
     /// <summary>
