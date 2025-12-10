@@ -3,51 +3,58 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    [Header("³¡¾°Ãû³ÆÅäÖÃ")]
+    [Header("åœºæ™¯åç§°é…ç½®")]
     public string mainSceneName = "SampleScene";
     public string productSceneName = "Product";
     public string designSceneName = "DesignScene";
     public string techniqueSceneName = "Technique";
     public string patternerSceneName = "PatternerScene";
     public string historySceneName = "History";
+    public string tieDyeSceneName = "TieDyeScene";
 
-    // Ìø×ªµ½³ÉÆ·½çÃæ
+    // ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½
     public void LoadProductScene()
     {
         LoadScene(productSceneName);
     }
 
-    // Ìø×ªµ½Éè¼Æ½çÃæ
+    // ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½
     public void LoadDesignScene()
     {
         LoadScene(designSceneName);
     }
 
-    // Ìø×ªµ½¼¼·¨½çÃæ
+    // ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public void LoadTechniqueScene()
     {
         LoadScene(techniqueSceneName);
     }
 
-    // Ìø×ªµ½»¨ÎÆ½çÃæ
+    // ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½
     public void LoadPatternerScene()
     {
         LoadScene(patternerSceneName);
     }
 
-    // Ìø×ªµ½ÀúÊ·½çÃæ
+    // ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Ê·ï¿½ï¿½ï¿½ï¿½
     public void LoadHistoryScene()
     {
         LoadScene(historySceneName);
     }
 
-    // ·µ»ØÖ÷½çÃæ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public void LoadMainScene()
     {
         LoadScene(mainSceneName);
     }
 
-    // Í¨ÓÃ³¡¾°¼ÓÔØ·½·¨
+    // åŠ è½½TieDyeåœºæ™¯
+    public void LoadTieDyeScene()
+    {
+        LoadScene(tieDyeSceneName);
+    }
+
+    // é€šè¿‡åç§°åŠ è½½åœºæ™¯
     public void LoadScene(string sceneName)
     {
         if (SceneExists(sceneName))
@@ -56,11 +63,11 @@ public class SceneController : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"³¡¾° '{sceneName}' ²»´æÔÚ£¡Çë¼ì²é³¡¾°Ãû³ÆºÍBuild Settings¡£");
+            Debug.LogError($"ï¿½ï¿½ï¿½ï¿½ '{sceneName}' ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½é³¡ï¿½ï¿½ï¿½ï¿½ï¿½Æºï¿½Build Settingsï¿½ï¿½");
         }
     }
 
-    // ¼ì²é³¡¾°ÊÇ·ñ´æÔÚ
+    // ï¿½ï¿½é³¡ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
     private bool SceneExists(string sceneName)
     {
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
@@ -73,7 +80,7 @@ public class SceneController : MonoBehaviour
         return false;
     }
 
-    // ÖØĞÂ¼ÓÔØµ±Ç°³¡¾°
+    // ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½
     public void ReloadCurrentScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

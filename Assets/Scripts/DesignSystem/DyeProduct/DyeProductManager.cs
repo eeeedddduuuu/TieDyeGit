@@ -1,4 +1,5 @@
 using UnityEngine;
+using DG.Tweening;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,9 +13,11 @@ namespace DesignSystem.DyeProduct
         [SerializeField] private GameObject banlanImagePrefab;
         [SerializeField] private GameObject limeImagePrefab;
         [SerializeField] private GameObject hammerImagePrefab; // HammerImage预制体引用
-        [SerializeField] private Transform canvasTransform;
-        [SerializeField] private AudioSource audioSource;
-        [SerializeField] private AudioClip pourWaterClip;
+    [SerializeField] private GameObject brushPrefab; // 刷子预制体引用
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private Transform canvasTransform;
+    [SerializeField] private Transform panelTransform; // 刷子移动的面板
+    [SerializeField] private AudioClip pourWaterClip;
         [SerializeField] private AudioClip beatClip; // 锤子音效
         [SerializeField] private AudioClip finishClip; // 完成音效
         [SerializeField] private GameObject bucketEmptyObject; // 空桶对象引用
@@ -266,7 +269,8 @@ namespace DesignSystem.DyeProduct
                 StartHammerAnimationSequence();
             }
             else if (nextButtonClickCount == 3)
-            {    // 第三次点击 - Bubble向左平移1000单位
+            {
+                // 第三次点击 - Bubble向左平移1000单位
                 StartBubbleLeftMovement();
                 
                 // 同时启动Finish对象的延迟移动（0.5秒后向右平移900单位）
@@ -278,22 +282,67 @@ namespace DesignSystem.DyeProduct
                 // 将Bucket_froth的透明度调为0，持续1秒
                 FadeBucketFrothToZero();
                 
-                // 禁用nextButton，防止第四次点击
-                if (nextButton != null)
-                {
-                    nextButton.interactable = false;
-                    Debug.Log("NextButton has been disabled after third click");
-                }
-                
                 // 显示并放大NextScene对象
                 ShowAndScaleNextScene();
             }
+            else if (nextButtonClickCount == 6)
+            {
+                // 第六次点击 - 创建刷子预制体并执行动画
+                StartBrushAnimation();
+            }
+        }
+        
+        private void StartBrushAnimation()
+        {
+            if (brushPrefab == null)
+            {
+                Debug.LogWarning("BrushPrefab reference is missing!");
+                return;
+            }
+            
+            if (canvasTransform == null)
+            {
+                Debug.LogWarning("CanvasTransform reference is missing!");
+                return;
+            }
+            
+            if (panelTransform == null)
+            {
+                Debug.LogWarning("PanelTransform reference is missing!");
+                return;
+            }
+            
+            // 获取面板的尺寸和位置信息
+            Rect panelRect = ((RectTransform)panelTransform).rect;
+            Vector2 panelPosition = ((RectTransform)panelTransform).anchoredPosition;
+            
+            // 实例化刷子预制体
+            GameObject brushInstance = Instantiate(brushPrefab, canvasTransform);
+            RectTransform brushRectTransform = brushInstance.GetComponent<RectTransform>();
+            
+            // 设置刷子的初始位置（面板左侧）
+            Vector2 startPosition = new Vector2(panelPosition.x - panelRect.width / 2, panelPosition.y);
+            brushRectTransform.anchoredPosition = startPosition;
+            
+            // 定义动画结束位置（面板右侧）
+            Vector2 endPosition = new Vector2(panelPosition.x + panelRect.width / 2, panelPosition.y);
+            
+            // 使用DOTween实现平移动画，持续1秒
+            brushRectTransform.DOAnchorPos(endPosition, 1.0f).OnComplete(() => {
+                // 动画结束后销毁刷子实例
+                Destroy(brushInstance);
+                Debug.Log("Brush animation completed");
+            });
+            
+            Debug.Log("Brush animation started");
         }
         
         private void StartHammerAnimationSequence()
-        {    // 停止现有的锤子动画协程
+        {
+            // 停止现有的锤子动画协程
             if (hammerAnimationCoroutine != null)
-            {    StopCoroutine(hammerAnimationCoroutine);
+            {
+                StopCoroutine(hammerAnimationCoroutine);
                 hammerAnimationCoroutine = null;
             }
             

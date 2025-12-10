@@ -17,8 +17,8 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Design/Cloth.unity
     guid: b218025d637ac6e46a0e5c38934a7178
-  - enabled: 1
-    path: Assets/Scenes/Design/TieDyeScene.unity
+  - enabled: 0
+    path: Assets/Scenes/Design/Finish.unity
     guid: 88b6c2450da6c1744af1f1fc41ec262a
   - enabled: 1
     path: Assets/Scenes/Design/test.unity
@@ -34,12 +34,14 @@ EditorBuildSettings:
     guid: 174724847c6c21a4cb256df405f2a80c
   - enabled: 1
     path: Assets/Scenes/Product.unity
-    guid: 7d5177fddc19e034f8b9e97283a83afd
+    guid: 1d39e682a1e3ada4eade18522ddbbf15
   - enabled: 1
     path: Assets/Scenes/Technique.unity
     guid: e7d1699ac99fbb34abd0564238ee09c0
   - enabled: 1
     path: Assets/Scenes/Animation.unity
     guid: 3fa5f0b8b5a2afc42974cef0cc8a6b58
+  - enabled: 1
+    path: Assets/Scenes/Design/TieDyeScene.unity
+    guid: 0ec3a630a9925f04fa91ab6efa10c570
   m_configObjects: {}
-  m_UseUCBPForAssetBundles: 0
