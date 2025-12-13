@@ -4,9 +4,19 @@ public class SimpleBackgroundMusic : MonoBehaviour
 {
     public AudioClip backgroundMusic;
 
+    private static SimpleBackgroundMusic instance;
+
     void Start()
     {
-        // 确保对象在场景切换时不被销毁
+        // 如果已存在实例，销毁新创建的
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        // 设置当前实例
+        instance = this;
         DontDestroyOnLoad(gameObject);
 
         // 设置AudioSource
@@ -20,11 +30,5 @@ public class SimpleBackgroundMusic : MonoBehaviour
         audioSource.loop = true;
         audioSource.volume = 0.7f;
         audioSource.Play();
-
-        // 防止重复创建（简单检查）
-        if (GameObject.FindGameObjectsWithTag("BackgroundMusic").Length > 1)
-        {
-            Destroy(gameObject);
-        }
     }
 }

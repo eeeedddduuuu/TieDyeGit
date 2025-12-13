@@ -722,6 +722,7 @@ MonoBehaviour:
   techniqueSceneName: Technique
   patternerSceneName: PatternerScene
   historySceneName: History
+  tieDyeSceneName: TieDyeScene
 --- !u!4 &1625580125
 Transform:
   m_ObjectHideFlags: 0
