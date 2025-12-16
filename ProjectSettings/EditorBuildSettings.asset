@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/MainMenuScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/Design/DesignScene.unity
+    path: Assets/Scenes/Imitate/DesignScene.unity
     guid: 818b27d892136f7489128bdef8102b34
   - enabled: 0
     path: Assets/Scenes/Design/DyeProduct.unity
@@ -21,11 +21,14 @@ EditorBuildSettings:
     path: Assets/Scenes/Design/Finish.unity
     guid: 88b6c2450da6c1744af1f1fc41ec262a
   - enabled: 1
-    path: Assets/Scenes/Design/test.unity
+    path: Assets/Scenes/Imitate/Process.unity
     guid: 2aa6e2ea534beb442ab5b8fe5bb1499b
   - enabled: 0
     path: Assets/Scenes/EffectScene.unity
     guid: 4e3748e2f77e9af48ada6555eaf1a11a
+  - enabled: 1
+    path: Assets/Scenes/Imitate/3DScene.unity
+    guid: 6e418c11f01705640a363a67b18ac418
   - enabled: 1
     path: Assets/Scenes/History.unity
     guid: 18a0033d3f2fe0b4f8a351281cf811e6

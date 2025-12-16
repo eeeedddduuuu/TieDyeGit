@@ -107,7 +107,7 @@ public class DesignUIAnimation : MonoBehaviour
                 try
                 {
                     Debug.Log("正在加载test场景");
-                    SceneManager.LoadScene("Assets/Scenes/Design/test.unity");
+                    SceneManager.LoadScene("Assets/Scenes/Imitate/Process.unity");
                 }
                 catch (System.Exception e)
                 {

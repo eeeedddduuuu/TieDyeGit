@@ -4,20 +4,20 @@ using UnityEngine.UI;
 
 public class DesignManager : MonoBehaviour
 {
-    [Header("UI����")]
+    [Header("UI设置")]
     public Transform patternButtonsContainer; // PatternButtonsContainer
-    public RectTransform designArea; // DesignArea - ��ΪRectTransform����
+    public RectTransform designArea; // DesignArea - 作为RectTransform引用
     public Button clearButton;
     public Button nextStepButton;
 
-    [Header("����������")]
+    [Header("工具栏管理")]
     public ToolbarManager toolbarManager;
 
-    [Header("Ԥ������ز�")]
-    public GameObject patternPrefab; // ����Ԥ����
+    [Header("预制体与资源")]
+    public GameObject patternPrefab; // 花纹预制体
     public List<PatternData> availablePatterns = new List<PatternData>();
 
-    [Header("��ǰ״̬")]
+    [Header("当前状态")]
     public DraggablePattern selectedPattern;
     public CanvasDesignData currentDesign = new CanvasDesignData();
 
@@ -29,17 +29,17 @@ public class DesignManager : MonoBehaviour
 
     void Update()
     {
-        // ��������������
+        // 处理鼠标滚轮输入
         HandleMouseWheelInput();
 
-        // �����������루ɾ������
+        // 处理键盘输入（如删除）
         HandleKeyboardInput();
     }
 
-    // ��ʼ��UI
+    // 初始化UI
     private void InitializeUI()
     {
-        // �󶨰�ť�¼�
+        // 绑定按钮事件
         if (clearButton != null)
             clearButton.onClick.AddListener(ClearDesign);
 
@@ -47,7 +47,7 @@ public class DesignManager : MonoBehaviour
             nextStepButton.onClick.AddListener(SaveAndProceed);
     }
 
-    // ������������
+    // 处理键盘输入
     private void HandleKeyboardInput()
     {
         if (Input.GetKeyDown(KeyCode.Delete))
@@ -56,57 +56,57 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // ���ػ��ư�ť�����ֲ��䣩
+    // 加载花纹按钮
     private void LoadPatternButtons()
     {
         if (patternButtonsContainer == null) return;
 
-        // ������а�ť
+        // 清除现有按钮
         foreach (Transform child in patternButtonsContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // Ϊÿ�����ƴ�����ť
+        // 为每个花纹数据创建按钮
         foreach (PatternData pattern in availablePatterns)
         {
             CreatePatternButton(pattern);
         }
     }
 
-    // �������ư�ť�����ֲ��䣩
+    // 创建单个花纹按钮
     private void CreatePatternButton(PatternData pattern)
     {
-        // ������ť����
+        // 创建按钮对象
         GameObject buttonObj = new GameObject($"Btn_{pattern.patternId}");
         buttonObj.transform.SetParent(patternButtonsContainer, false);
 
-        // ����UI���
+        // 添加UI组件
         Image image = buttonObj.AddComponent<Image>();
         Button button = buttonObj.AddComponent<Button>();
 
-        // ���ð�ť���
+        // 设置按钮图标
         image.sprite = pattern.patternSprite;
         image.preserveAspect = true;
 
-        // ���ð�ť��С
+        // 设置按钮大小
         RectTransform rectTransform = buttonObj.GetComponent<RectTransform>();
         rectTransform.sizeDelta = new Vector2(80, 80);
 
-        // �󶨵���¼�
+        // 绑定点击事件
         button.onClick.AddListener(() => OnPatternSelected(pattern));
     }
 
-    // �����Ʊ�ѡ��ʱ����
+    // 当花纹被选中时调用
     public void OnPatternSelected(PatternData patternData)
     {
         if (patternPrefab == null || designArea == null)
         {
-            Debug.LogError("ȱ��Ԥ���������������ã�");
+            Debug.LogError("缺少预制体或设计区域引用！");
             return;
         }
 
-        // ʵ�����»���
+        // 实例化新花纹
         GameObject newPatternObj = Instantiate(patternPrefab, designArea);
         DraggablePattern draggablePattern = newPatternObj.GetComponent<DraggablePattern>();
 
@@ -114,22 +114,22 @@ public class DesignManager : MonoBehaviour
         {
             draggablePattern.Initialize(patternData);
 
-            // ���ó�ʼλ�ã��ڻ������ĸ������ƫ�ƣ�
+            // 设置初始位置（在画布中心的随机偏移）
             RectTransform rectTransform = newPatternObj.GetComponent<RectTransform>();
             rectTransform.anchoredPosition = new Vector2(
                 Random.Range(-100, 100),
                 Random.Range(-100, 100)
             );
 
-            // ѡ���´����Ļ���
+            // 选中新创建的花纹
             SelectPattern(draggablePattern);
         }
     }
 
-    // ѡ���ƣ����°汾��
+    // 选中花纹
     public void SelectPattern(DraggablePattern pattern)
     {
-        // ȡ��֮ǰ��ѡ��
+        // 取消之前的选中
         if (selectedPattern != null)
         {
             selectedPattern.SetSelected(false);
@@ -137,13 +137,13 @@ public class DesignManager : MonoBehaviour
 
         selectedPattern = pattern;
 
-        // ������ѡ��
+        // 设置新选中
         if (selectedPattern != null)
         {
             selectedPattern.SetSelected(true);
             selectedPattern.transform.SetAsLastSibling();
 
-            // ���¹�����״̬
+            // 更新工具栏状态
             if (toolbarManager != null)
             {
                 toolbarManager.UpdateToolbarState(true);
@@ -151,7 +151,7 @@ public class DesignManager : MonoBehaviour
         }
         else
         {
-            // û��ѡ���κλ���ʱ���¹�����
+            // 没有选中任何花纹时更新工具栏
             if (toolbarManager != null)
             {
                 toolbarManager.UpdateToolbarState(false);
@@ -159,7 +159,7 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // ���õ�ǰģʽ
+    // 设置当前交互模式
     public void SetCurrentMode(DraggablePattern.InteractionMode mode)
     {
         if (selectedPattern != null)
@@ -168,17 +168,17 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // ɾ��ѡ�еĻ���
+    // 删除选中的花纹
     public void DeleteSelectedPattern()
     {
         if (selectedPattern != null)
         {
             Destroy(selectedPattern.gameObject);
-            SelectPattern(null); // ���ѡ��
+            SelectPattern(null); // 清空选中
         }
     }
 
-    // ��������������
+    // 处理鼠标滚轮输入
     private void HandleMouseWheelInput()
     {
         if (selectedPattern == null) return;
@@ -197,7 +197,7 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // �����ƣ����°汾��
+    // 清空设计
     public void ClearDesign()
     {
         if (designArea == null) return;
@@ -212,27 +212,23 @@ public class DesignManager : MonoBehaviour
         }
 
         currentDesign.placements.Clear();
-        SelectPattern(null); // ���ѡ��
+        SelectPattern(null); // 清空选中
     }
 
-    // ���沢������һ�������ֲ��䣩
     public void SaveAndProceed()
     {
-        // �ռ����л�������
+        // 1. 先从 UI 里的 DraggablePattern 收集数据到 currentDesign
         CollectDesignData();
 
-        // ��������
+        // 2. 然后保存 (使用我们上面修改过的新方法)
         SaveDesignData();
 
-        // ������һ��
-        Debug.Log("��Ʊ�����ɣ�׼��������һ��...");
-        Debug.Log($"�������� {currentDesign.placements.Count} ������");
+        // 3. 最后跳转场景
+        Debug.Log("设计数据保存成功");
 
-        // ��ת����Ⱦ����
-       // UnityEngine.SceneManagement.SceneManager.LoadScene("TieDyeScene");
     }
 
-    // �ռ�������ݣ����ֲ��䣩
+    // 收集设计数据
     private void CollectDesignData()
     {
         currentDesign.placements.Clear();
@@ -247,33 +243,33 @@ public class DesignManager : MonoBehaviour
         }
     }
 
+    // 修改 DesignManager.cs 中的这个方法
     private void SaveDesignData()
     {
-        // �ռ����������Ϣ
-        Vector2 designAreaSize = designArea.rect.size;
-        Vector2 designAreaPosition = designArea.anchoredPosition;
-
-        // �����������������Ϣ�����ݽṹ
-        DesignSessionData sessionData = new DesignSessionData
+        // 1. 确保将画布的尺寸更新到设计数据中
+        // (之前是保存在 sessionData 外层，现在要存进核心数据里)
+        if (designArea != null)
         {
-            designData = currentDesign,
-            canvasSize = designAreaSize,
-            canvasPosition = designAreaPosition
-        };
+            currentDesign.canvasSize = designArea.rect.size;
+        }
 
-        string jsonData = JsonUtility.ToJson(sessionData);
-        PlayerPrefs.SetString("CurrentDesign", jsonData);
-        PlayerPrefs.Save();
+        // 2. 使用 DesignSaveManager 进行标准保存
+        // 这样存入 PlayerPrefs 的就是纯净的 CanvasDesignData JSON，而不是 SessionData 包装壳
+        DesignSaveManager.SaveDesign(currentDesign);
 
-        Debug.Log("��������ѱ��棬�������ߴ�: " + designAreaSize);
+        // 3. 【关键】同时更新内存传输数据
+        // 这样场景跳转时可以直接从内存读，不需要读硬盘，更快且更稳
+        DesignDataTransfer.SetDesignDataForNextScene(currentDesign);
+
+        Debug.Log($"设计已保存并准备传输! 画布尺寸: {currentDesign.canvasSize}, 花纹数量: {currentDesign.placements.Count}");
     }
 
-    // ������ƻỰ������
+    // 设计会话数据类
     [System.Serializable]
     public class DesignSessionData
     {
         public CanvasDesignData designData;
-        public Vector2 canvasSize;      // �������ߴ�
-        public Vector2 canvasPosition;  // �������λ��
+        public Vector2 canvasSize;      // 画布尺寸
+        public Vector2 canvasPosition;  // 画布位置
     }
 }

@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneController : MonoBehaviour
+public class SceneLoader : MonoBehaviour
 {
     [Header("场景名称配置")]
-    public string mainSceneName = "SampleScene";
+    // 这里已经帮你改成了 MainMenuScene
+    public string mainSceneName = "MainMenuScene";
     public string productSceneName = "Product";
     public string designSceneName = "DesignScene";
     public string techniqueSceneName = "Technique";
@@ -12,37 +13,37 @@ public class SceneController : MonoBehaviour
     public string historySceneName = "History";
     public string tieDyeSceneName = "TieDyeScene";
 
-    // ��ת����Ʒ����
+    // 跳转到产品场景
     public void LoadProductScene()
     {
         LoadScene(productSceneName);
     }
 
-    // ��ת����ƽ���
+    // 跳转到设计场景
     public void LoadDesignScene()
     {
         LoadScene(designSceneName);
     }
 
-    // ��ת����������
+    // 跳转到工艺场景
     public void LoadTechniqueScene()
     {
         LoadScene(techniqueSceneName);
     }
 
-    // ��ת�����ƽ���
+    // 跳转到制版场景
     public void LoadPatternerScene()
     {
         LoadScene(patternerSceneName);
     }
 
-    // ��ת����ʷ����
+    // 跳转到历史场景
     public void LoadHistoryScene()
     {
         LoadScene(historySceneName);
     }
 
-    // ����������
+    // 跳转到主场景 (这里会去加载 MainMenuScene)
     public void LoadMainScene()
     {
         LoadScene(mainSceneName);
@@ -63,11 +64,11 @@ public class SceneController : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"���� '{sceneName}' �����ڣ����鳡�����ƺ�Build Settings��");
+            Debug.LogError($"场景 '{sceneName}' 不存在，请检查场景名称和 Build Settings。");
         }
     }
 
-    // ��鳡���Ƿ����
+    // 检查场景是否存在
     private bool SceneExists(string sceneName)
     {
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
@@ -80,7 +81,7 @@ public class SceneController : MonoBehaviour
         return false;
     }
 
-    // ���¼��ص�ǰ����
+    // 重新加载当前场景
     public void ReloadCurrentScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
