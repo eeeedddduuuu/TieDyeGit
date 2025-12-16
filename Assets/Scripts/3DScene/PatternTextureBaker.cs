@@ -1,4 +1,4 @@
-using System.Collections; // 必须引用这个
+using System.Collections; 
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,6 +29,39 @@ public class PatternTextureBaker : MonoBehaviour
     {
         // 改用协程：等待一帧再拍照，确保UI已经排版完成
         StartCoroutine(ProcessDesignAndBake());
+    }
+    // --- 新增：供外部调用的改色方法 ---
+    public void UpdateBackgroundColor(Color newColor)
+    {
+        // 1. 更新内存中的颜色变量
+        tieDyeBackgroundColor = newColor;
+
+        // 2. 找到画布上的背景层并改色
+        if (offScreenCanvasRect != null)
+        {
+            Transform bgTrans = offScreenCanvasRect.Find("BackgroundLayer");
+            if (bgTrans != null)
+            {
+                Image bgImg = bgTrans.GetComponent<Image>();
+                if (bgImg != null)
+                {
+                    bgImg.color = newColor;
+                }
+            }
+        }
+
+        // 3. 立即重新拍照应用
+        // 注意：如果你之前的 GetDesignData 逻辑比较耗时，
+        // 这里可以直接复用 canvasSize 而不需要重新 GetDesignData
+        if (DesignDataTransfer.CurrentDesignData != null)
+        {
+            BakeAndApplyTexture(DesignDataTransfer.CurrentDesignData.canvasSize);
+        }
+        else
+        {
+            // 如果没有数据，就用当前画布的尺寸兜底
+            BakeAndApplyTexture(offScreenCanvasRect.sizeDelta);
+        }
     }
 
     IEnumerator ProcessDesignAndBake()
