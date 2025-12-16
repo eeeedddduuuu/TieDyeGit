@@ -9,6 +9,8 @@ public class PatternTextureBaker : MonoBehaviour
     public RectTransform offScreenCanvasRect;
     public Camera bakingCamera;
     public GameObject clothObject;
+    // 【新增】专门用来装花纹的容器，防止清理时把背景图也删了
+    public Transform patternContainer;
 
     [Header("资源配置")]
     public GameObject patternImagePrefab;
@@ -29,6 +31,15 @@ public class PatternTextureBaker : MonoBehaviour
     {
         // 改用协程：等待一帧再拍照，确保UI已经排版完成
         StartCoroutine(ProcessDesignAndBake());
+        if (DesignDataTransfer.CurrentDesignData != null)
+        {
+            // 把当前数据传进去
+            ReconstructPatternOnCanvas(DesignDataTransfer.CurrentDesignData);
+
+            // ... 颜色设置代码 ...
+
+            BakeAndApplyTexture(DesignDataTransfer.CurrentDesignData.canvasSize);
+        }
     }
     // --- 新增：供外部调用的改色方法 ---
     public void UpdateBackgroundColor(Color newColor)
@@ -134,121 +145,76 @@ public class PatternTextureBaker : MonoBehaviour
         if (offScreenCanvasRect != null) offScreenCanvasRect.sizeDelta = size;
     }
 
-    void ReconstructPatternOnCanvas(CanvasDesignData data)
+    // 2. 【修改】重构花纹逻辑 (确保先清空)
+    // 注意：请将原有的 ReconstructPatternOnCanvas 修改为接受参数的版本
+    private void ReconstructPatternOnCanvas(CanvasDesignData data)
     {
-        // 1. 清理旧物体
-        foreach (Transform child in offScreenCanvasRect) Destroy(child.gameObject);
+        // --- 关键步骤：先清空画布上现有的所有花纹 ---
+        if (patternContainer != null)
+        {
+            foreach (Transform child in patternContainer)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        else
+        {
+            Debug.LogError("PatternContainer 为空，请检查 Inspector 赋值！");
+            return;
+        }
 
-        // 2. 创建背景层
-        GameObject bgObj = Instantiate(patternImagePrefab, offScreenCanvasRect);
-        bgObj.name = "BackgroundLayer";
-
-        // 【关键修复】强制将新生成的背景改到和 Canvas 一样的层级 (比如 UI 层)
-        bgObj.layer = offScreenCanvasRect.gameObject.layer;
-
-        RectTransform bgRect = bgObj.GetComponent<RectTransform>();
-        Image bgImg = bgObj.GetComponent<Image>();
-        bgRect.anchorMin = Vector2.zero; bgRect.anchorMax = Vector2.one;
-        bgRect.sizeDelta = Vector2.zero; bgRect.anchoredPosition = Vector2.zero;
-        bgImg.sprite = null;
-        bgImg.color = tieDyeBackgroundColor;
-
-        // 3. 生成花纹层
+        // --- 接下来是生成新花纹 (和你原本的 Start 里的逻辑类似) ---
         foreach (var placement in data.placements)
         {
-            GameObject newObj = Instantiate(patternImagePrefab, offScreenCanvasRect);
-            newObj.name = "Pattern_" + placement.patternId;
-            newObj.layer = offScreenCanvasRect.gameObject.layer; // 保持层级一致
-
-            Image img = newObj.GetComponent<Image>();
+            // 1. 实例化 Image 预制体
+            GameObject newObj = Instantiate(patternImagePrefab, patternContainer);
             RectTransform rect = newObj.GetComponent<RectTransform>();
+            Image img = newObj.GetComponent<Image>();
 
+            // 2. 还原位置、旋转、缩放
+            rect.anchoredPosition = placement.position;
+            rect.localEulerAngles = new Vector3(0, 0, placement.rotation);
+            rect.localScale = placement.scale;
+
+            // 3. 还原图片内容 (查找 ID)
+            // ---------------------------------------------------------
+            // 这是一个混合查找逻辑：先查系统库，再查用户上传库
+            // ---------------------------------------------------------
             PatternData pData = allPatternConfig.Find(p => p.patternId == placement.patternId);
 
-            if (pData == null)
+            // 如果系统库没找到，去用户库找 (防止上传的图片变白块)
+            if (pData == null && UserPatternStorage.userPatterns.ContainsKey(placement.patternId))
             {
-                // 尝试去用户仓库找
-                if (UserPatternStorage.userPatterns.ContainsKey(placement.patternId))
-                {
-                    pData = UserPatternStorage.userPatterns[placement.patternId];
-                }
+                pData = UserPatternStorage.userPatterns[placement.patternId];
             }
 
             if (pData != null)
             {
-                // ... (原本的设置图片代码，不用动) ...
+                // 注意：3D场景我们要用 whiteTextureSprite (黑底白花)
+                if (pData.whiteTextureSprite != null)
+                    img.sprite = pData.whiteTextureSprite;
+                else if (pData.patternSprite != null)
+                    img.sprite = pData.patternSprite; // 保底
 
-                // 【针对大小问题的额外补丁】
-                // 如果是用户图片，可能尺寸很奇葩，强制限制一下最大尺寸
-                if (pData.patternId.StartsWith("User_"))
+                // 针对用户上传图片的尺寸修正 (防止巨大化)
+                if (placement.patternId.StartsWith("User_"))
                 {
                     img.SetNativeSize();
-                    // 如果由于原图太大导致 NativeSize 巨大，限制一下最大宽度
-                    if (rect.sizeDelta.x > 300)
+                    if (rect.sizeDelta.x > 300) // 限制最大宽度
                     {
                         float ratio = rect.sizeDelta.y / rect.sizeDelta.x;
                         rect.sizeDelta = new Vector2(300, 300 * ratio);
                     }
                 }
-            }
-            else
-            {
-                Debug.LogError($"还是找不到 ID 为 {placement.patternId} 的花纹数据！");
-            }
-
-            // 临时变量，用于记录图片的基础宽高比
-            Vector2 finalSize = manualBaseSize;
-
-            if (pData != null)
-            {
-                // 优先用白图，没有则用黑图
-                Sprite targetSprite = (pData.whiteTextureSprite != null) ? pData.whiteTextureSprite : pData.patternSprite;
-                img.sprite = targetSprite;
-                img.color = patternTintColor;
-
-                // 【核心修改】尺寸计算逻辑
-                if (useNativeSize && targetSprite != null)
-                {
-                    // 方案A: 使用图片的真实像素大小 (比如图片是 512x512，这里就设为 512x512)
-                    img.SetNativeSize();
-                    finalSize = rect.sizeDelta; // 记录下 NativeSize 后的尺寸
-                }
                 else
                 {
-                    // 方案B: 使用手动指定的大小，但保持长宽比
-                    img.preserveAspect = true;
-                    if (targetSprite != null)
-                    {
-                        // 根据图片比例自动调整宽高，防止拉伸
-                        float aspect = targetSprite.rect.width / targetSprite.rect.height;
-                        if (aspect >= 1) // 宽图
-                            finalSize = new Vector2(manualBaseSize.x, manualBaseSize.x / aspect);
-                        else // 长图
-                            finalSize = new Vector2(manualBaseSize.y * aspect, manualBaseSize.y);
-                    }
+                    img.SetNativeSize(); // 普通花纹也重置一下大小
                 }
             }
-
-            // 应用位置和旋转
-            rect.anchoredPosition = placement.position;
-            rect.localRotation = Quaternion.Euler(0, 0, placement.rotation);
-
-            // 【核心修改】应用缩放
-            // 这里的 Scale 是你在设计场景里用鼠标滚轮缩放的倍数 (比如 1.5倍)
-            // 最终大小 = 基础大小 * 缩放倍数
-            rect.localScale = new Vector3(placement.scale.x, placement.scale.y, 1f);
-
-            // 应用基础大小 (替代之前写死的 80, 80)
-            // 如果上面使用了 SetNativeSize，这里如果不重设，缩放可能会叠加出问题，所以我们要显式控制一下
-            if (!useNativeSize)
-            {
-                rect.sizeDelta = finalSize;
-            }
-            // 如果用了 NativeSize，Instantiate 出来的 Image 已经自动有了正确 sizeDelta，不需要再赋值，除非被 Scale 影响
         }
     }
 
-    void BakeAndApplyTexture(Vector2 canvasSize)
+    public void BakeAndApplyTexture(Vector2 canvasSize)
     {
         if (bakedTexture != null) bakedTexture.Release();
 
@@ -289,8 +255,20 @@ public class PatternTextureBaker : MonoBehaviour
             }
         }
     }
+    // 1. 【新增】供外部调用的总接口：应用历史数据
+    public void ApplyHistoryData(CanvasDesignData historyData)
+    {
+        // A. 更新背景色
+        UpdateBackgroundColor(historyData.savedBackgroundColor);
 
-        void OnDestroy()
+        // B. 重构花纹 (传入数据)
+        ReconstructPatternOnCanvas(historyData);
+
+        // C. 重新拍照
+        BakeAndApplyTexture(historyData.canvasSize);
+    }
+
+    void OnDestroy()
     {
         if (bakedTexture != null) bakedTexture.Release();
     }

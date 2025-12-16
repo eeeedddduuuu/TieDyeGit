@@ -12,6 +12,9 @@ public class CanvasDesignData
     // 设计画布信息
     public Vector2 canvasSize = new Vector2(800, 600);
 
+    // 【新增】保存扎染的背景颜色 (默认为蓝色)
+    public Color savedBackgroundColor = new Color(0, 0.4f, 0.8f);
+
     public CanvasDesignData()
     {
         creationTime = DateTime.Now;
@@ -24,6 +27,7 @@ public class CanvasDesignData
         clone.designName = this.designName;
         clone.creationTime = this.creationTime;
         clone.canvasSize = this.canvasSize;
+        clone.savedBackgroundColor = this.savedBackgroundColor;
 
         foreach (var placement in this.placements)
         {

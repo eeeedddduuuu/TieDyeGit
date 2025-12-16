@@ -3760,6 +3760,7 @@ MonoBehaviour:
     designName: "\u672A\u547D\u540D\u8BBE\u8BA1"
     placements: []
     canvasSize: {x: 800, y: 600}
+    savedBackgroundColor: {r: 0, g: 0.4, b: 0.8, a: 1}
   transformGizmo: {fileID: 2044891613}
 --- !u!114 &1777454962
 MonoBehaviour:
@@ -4418,6 +4419,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2014189733}
     m_Modifications:
+    - target: {fileID: 2428401117079819636, guid: c1a15916f11b4a74d80431ae3e5c27b9,
+        type: 3}
+      propertyPath: minScale
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 5196901362675521227, guid: c1a15916f11b4a74d80431ae3e5c27b9,
         type: 3}
       propertyPath: m_Pivot.x

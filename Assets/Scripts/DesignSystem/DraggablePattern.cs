@@ -15,7 +15,7 @@ public class DraggablePattern : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     private Vector2 dragOffset;
 
     [Header("Àı∑≈…Ë÷√")]
-    public float minScale = 0.5f;
+    public float minScale = 0.1f;
     public float maxScale = 3f;
     public float scaleSpeed = 0.1f;
     private Vector3 originalScale;
