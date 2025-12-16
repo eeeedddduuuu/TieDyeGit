@@ -165,6 +165,37 @@ public class PatternTextureBaker : MonoBehaviour
 
             PatternData pData = allPatternConfig.Find(p => p.patternId == placement.patternId);
 
+            if (pData == null)
+            {
+                // 尝试去用户仓库找
+                if (UserPatternStorage.userPatterns.ContainsKey(placement.patternId))
+                {
+                    pData = UserPatternStorage.userPatterns[placement.patternId];
+                }
+            }
+
+            if (pData != null)
+            {
+                // ... (原本的设置图片代码，不用动) ...
+
+                // 【针对大小问题的额外补丁】
+                // 如果是用户图片，可能尺寸很奇葩，强制限制一下最大尺寸
+                if (pData.patternId.StartsWith("User_"))
+                {
+                    img.SetNativeSize();
+                    // 如果由于原图太大导致 NativeSize 巨大，限制一下最大宽度
+                    if (rect.sizeDelta.x > 300)
+                    {
+                        float ratio = rect.sizeDelta.y / rect.sizeDelta.x;
+                        rect.sizeDelta = new Vector2(300, 300 * ratio);
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError($"还是找不到 ID 为 {placement.patternId} 的花纹数据！");
+            }
+
             // 临时变量，用于记录图片的基础宽高比
             Vector2 finalSize = manualBaseSize;
 

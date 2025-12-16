@@ -62,7 +62,7 @@ public class DraggablePattern : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         // 直接在花纹上添加Outline组件，但默认禁用
         selectionOutline = gameObject.AddComponent<Outline>();
         selectionOutline.effectColor = new Color(1, 0.92f, 0.016f, 1f); // 金黄色
-        selectionOutline.effectDistance = new Vector2(3, -3);
+        selectionOutline.effectDistance = new Vector2(1, -1);
         selectionOutline.enabled = false;
     }
 

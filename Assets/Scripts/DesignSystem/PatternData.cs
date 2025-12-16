@@ -1,5 +1,7 @@
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "NewPattern", menuName = "Design/Pattern Data")]
+
 [System.Serializable]
 public class PatternData
 {

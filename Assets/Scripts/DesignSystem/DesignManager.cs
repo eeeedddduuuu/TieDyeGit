@@ -21,6 +21,9 @@ public class DesignManager : MonoBehaviour
     public DraggablePattern selectedPattern;
     public CanvasDesignData currentDesign = new CanvasDesignData();
 
+    [Header("交互增强")]
+    public TransformGizmoController transformGizmo; // 拖入场景中的 Gizmo
+
     void Start()
     {
         InitializeUI();
@@ -157,6 +160,11 @@ public class DesignManager : MonoBehaviour
                 toolbarManager.UpdateToolbarState(false);
             }
         }
+        // 【新增】通知 Gizmo 现在的目标是谁
+        if (transformGizmo != null)
+        {
+            transformGizmo.SetTarget(pattern);
+        }
     }
 
     // 设置当前交互模式
@@ -175,6 +183,11 @@ public class DesignManager : MonoBehaviour
         {
             Destroy(selectedPattern.gameObject);
             SelectPattern(null); // 清空选中
+            // 【新增】目标没了，隐藏 Gizmo
+            if (transformGizmo != null)
+            {
+                transformGizmo.SetTarget(null);
+            }
         }
     }
 
@@ -210,7 +223,10 @@ public class DesignManager : MonoBehaviour
                 Destroy(child.gameObject);
             }
         }
-
+        if (transformGizmo != null)
+        {
+            transformGizmo.SetTarget(null);
+        }
         currentDesign.placements.Clear();
         SelectPattern(null); // 清空选中
     }
