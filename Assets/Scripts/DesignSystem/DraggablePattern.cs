@@ -214,7 +214,10 @@ public class DraggablePattern : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             patternId = patternData?.patternId ?? "",
             position = rectTransform.anchoredPosition,
             scale = rectTransform.localScale,
-            rotation = rectTransform.localEulerAngles.z
+            rotation = rectTransform.localEulerAngles.z,
+
+            // 【新增】记录当前的矩形宽高
+            sizeDelta = rectTransform.sizeDelta
         };
     }
 }

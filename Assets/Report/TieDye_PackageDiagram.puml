@@ -1,0 +1,130 @@
+@startuml 扎染项目包图
+
+left to right direction
+
+skinparam package {
+    backgroundColor #F0F8FF
+    borderColor #333333
+    arrowColor #666666
+}
+
+skinparam packageStyle rect
+
+' 项目根包
+package "TieDye项目" {
+    ' 场景包
+    package "Assets.Scenes" {
+        [MainMenuScene]
+        [DesignScene]
+        [3DScene]
+        [HistoryScene]
+        [TechniqueScene]
+    }
+    
+    ' 脚本包
+    package "Assets.Scripts" {
+        ' 管理器包
+        package "Managers" {
+            [GameManager]
+            [SceneTransitionManager]
+        }
+        
+        ' UI包
+        package "UI" {
+            [UIResourceManager]
+            [TecCanvasManager]
+            [UIManager]
+            [ButtonController]
+        }
+        
+        ' 系统包
+        package "Systems" {
+            [TieDyeSystem]
+            [HistorySystem]
+            [TechniqueSystem]
+        }
+        
+        ' 数据包
+        package "Data" {
+            [PatternData]
+            [DesignData]
+            [HistoryRecord]
+            [TechniqueStep]
+        }
+        
+        ' 工具包
+        package "Utilities" {
+            [TransitionType]
+            [MathUtility]
+            [TextureUtility]
+        }
+    }
+    
+    ' 资源包
+    package "Assets.Resources" {
+        [Textures]
+        [Prefabs]
+        [Audio]
+        [Fonts]
+    }
+    
+    ' 报告包
+    package "Assets.Report" {
+        [系统架构设计]
+        [TieDye_UseCaseDiagram]
+        [TieDye_SequenceDiagram]
+        [TieDye_ClassDiagram]
+        [TieDye_PackageDiagram]
+        [TieDye_DeploymentDiagram]
+        [TieDye_StateDiagram]
+    }
+}
+
+' 包之间的依赖关系
+
+' 场景依赖管理器
+[MainMenuScene] --> [Managers]
+[DesignScene] --> [Managers]
+[3DScene] --> [Managers]
+[HistoryScene] --> [Managers]
+[TechniqueScene] --> [Managers]
+
+' 场景依赖UI
+[MainMenuScene] --> [UI]
+[DesignScene] --> [UI]
+[3DScene] --> [UI]
+[HistoryScene] --> [UI]
+[TechniqueScene] --> [UI]
+
+' 场景依赖系统
+[DesignScene] --> [Systems]
+[3DScene] --> [Systems]
+[HistoryScene] --> [Systems]
+[TechniqueScene] --> [Systems]
+
+' 管理器依赖数据
+[Managers] --> [Data]
+
+' 管理器依赖工具
+[Managers] --> [Utilities]
+
+' UI依赖数据
+[UI] --> [Data]
+
+' UI依赖资源
+[UI] --> [Assets.Resources]
+
+' 系统依赖数据
+[Systems] --> [Data]
+
+' 系统依赖资源
+[Systems] --> [Assets.Resources]
+
+' 系统依赖工具
+[Systems] --> [Utilities]
+
+' 报告依赖其他包
+[Assets.Report] --> [Assets.Scenes]
+[Assets.Report] --> [Assets.Scripts]
+
+@enduml

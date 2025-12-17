@@ -1,0 +1,99 @@
+@startuml 扎染项目部署图
+
+skinparam node {
+    backgroundColor #F0F8FF
+    borderColor #333333
+    arrowColor #666666
+}
+
+skinparam artifact {
+    backgroundColor #E6F2FF
+    borderColor #4169E1
+    arrowColor #666666
+}
+
+skinparam database {
+    backgroundColor #E0F8E0
+    borderColor #2E8B57
+    arrowColor #666666
+}
+
+skinparam cloud {
+    backgroundColor #F5F5F5
+    borderColor #808080
+    arrowColor #666666
+}
+
+' 开发环境
+node "开发环境" as DevEnv {
+    artifact "Unity编辑器" as UnityEditor
+    artifact "Visual Studio" as VisualStudio
+    artifact "Git版本控制" as Git
+    database "项目资源库" as ProjectRepo
+}
+
+' 构建环境
+node "构建环境" as BuildEnv {
+    artifact "Unity构建工具" as UnityBuilder
+    artifact "构建脚本" as BuildScripts
+    database "构建缓存" as BuildCache
+}
+
+' 部署环境
+node "部署环境" as DeployEnv {
+    artifact "Windows桌面应用" as WindowsApp
+    artifact "MacOS应用" as MacOSApp
+    artifact "WebGL应用" as WebGLApp
+    database "用户数据存储" as UserDataStore
+}
+
+' 运行时环境
+cloud "用户设备" as UserDevice {
+    node "Windows PC" as WindowsPC
+    node "Mac电脑" as Mac
+    node "Web浏览器" as WebBrowser
+}
+
+' 数据流程
+DevEnv --> BuildEnv : 构建请求
+BuildEnv --> DeployEnv : 部署包
+DeployEnv --> UserDevice : 安装/访问
+
+' 开发环境内部
+UnityEditor --> ProjectRepo : 管理资源
+VisualStudio --> UnityEditor : 编写代码
+Git --> ProjectRepo : 版本控制
+
+' 构建环境内部
+UnityBuilder --> BuildScripts : 执行构建
+BuildScripts --> BuildCache : 缓存构建结果
+
+' 部署环境内部
+WindowsApp --> UserDataStore : 存储用户数据
+MacOSApp --> UserDataStore : 存储用户数据
+WebGLApp --> UserDataStore : 存储用户数据
+
+' 用户设备访问
+WindowsPC --> WindowsApp : 运行应用
+Mac --> MacOSApp : 运行应用
+WebBrowser --> WebGLApp : 访问应用
+
+' 项目文件结构
+artifact "项目文件结构" as ProjectStructure {
+    "Assets/"
+    "  Scenes/"
+    "  Scripts/"
+    "  Resources/"
+    "  Materials/"
+    "  Textures/"
+    "  Prefabs/"
+    "  Audio/"
+    "  Report/"
+    "ProjectSettings/"
+    "Packages/"
+    "README.md"
+}
+
+DevEnv --> ProjectStructure : 开发管理
+
+@enduml

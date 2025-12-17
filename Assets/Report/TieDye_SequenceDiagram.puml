@@ -1,0 +1,106 @@
+@startuml 扎染项目顺序图
+
+skinparam backgroundColor #F0F8FF
+skinparam titleFontSize 16
+skinparam titleFontColor #333333
+skinparam actorStyle awesome
+skinparam participantStyle rectangle
+skinparam arrowThickness 1.5
+skinparam sequenceMessageAlign center
+
+title 扎染项目核心流程顺序图
+
+actor 用户 as User
+participant 主菜单场景 as MainMenu
+participant 游戏管理器 as GameManager
+participant 场景过渡管理器 as SceneTransitionManager
+participant 设计场景 as DesignScene
+participant 扎染系统 as TieDyeSystem
+participant 3D场景 as Scene3D
+participant 历史系统 as HistorySystem
+participant 内容管理系统 as ContentManager
+
+' 主菜单流程
+User -> MainMenu: 启动应用
+MainMenu -> GameManager: 请求初始化
+GameManager --> MainMenu: 返回初始化完成
+
+' 进入设计场景流程
+User -> MainMenu: 点击"开始设计"
+MainMenu -> SceneTransitionManager: 请求过渡到设计场景
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(Out)
+SceneTransitionManager -> DesignScene: 异步加载场景
+DesignScene -> GameManager: 请求获取设计数据
+GameManager --> DesignScene: 返回初始设计数据
+DesignScene --> SceneTransitionManager: 场景加载完成
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(In)
+SceneTransitionManager --> MainMenu: 通知过渡完成
+MainMenu -> MainMenu: 销毁自身
+
+' 设计流程
+User -> DesignScene: 选择颜色
+DesignScene -> TieDyeSystem: 设置颜色参数
+TieDyeSystem --> DesignScene: 返回更新后的图案
+
+User -> DesignScene: 选择图案模板
+DesignScene -> TieDyeSystem: 应用图案模板
+TieDyeSystem --> DesignScene: 返回应用后的图案
+
+User -> DesignScene: 调整扎染参数
+DesignScene -> TieDyeSystem: 更新扎染参数
+TieDyeSystem --> DesignScene: 返回预览效果
+
+' 保存设计流程
+User -> DesignScene: 点击"保存设计"
+DesignScene -> GameManager: 请求保存设计数据
+GameManager --> DesignScene: 返回保存成功
+
+' 进入3D预览流程
+User -> DesignScene: 点击"3D预览"
+DesignScene -> SceneTransitionManager: 请求过渡到3D场景
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(Out)
+SceneTransitionManager -> Scene3D: 异步加载场景
+Scene3D -> GameManager: 请求获取当前设计数据
+GameManager --> Scene3D: 返回设计数据
+Scene3D -> Scene3D: 生成3D模型
+Scene3D -> Scene3D: 应用扎染纹理
+Scene3D --> SceneTransitionManager: 场景加载完成
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(In)
+SceneTransitionManager --> DesignScene: 通知过渡完成
+DesignScene -> DesignScene: 销毁自身
+
+' 返回历史记录流程
+User -> Scene3D: 点击"查看历史"
+Scene3D -> SceneTransitionManager: 请求过渡到历史场景
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(Out)
+SceneTransitionManager -> HistorySystem: 异步加载历史场景
+HistorySystem -> GameManager: 请求获取历史设计数据
+GameManager --> HistorySystem: 返回历史数据
+HistorySystem -> HistorySystem: 渲染历史记录列表
+HistorySystem --> SceneTransitionManager: 场景加载完成
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(In)
+SceneTransitionManager --> Scene3D: 通知过渡完成
+Scene3D -> Scene3D: 销毁自身
+
+' 查看工艺介绍流程
+User -> HistorySystem: 点击"工艺介绍"
+HistorySystem -> SceneTransitionManager: 请求过渡到工艺场景
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(Out)
+SceneTransitionManager -> ContentManager: 异步加载工艺场景
+ContentManager -> ContentManager: 加载工艺介绍资源
+ContentManager --> SceneTransitionManager: 场景加载完成
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(In)
+SceneTransitionManager --> HistorySystem: 通知过渡完成
+HistorySystem -> HistorySystem: 销毁自身
+
+' 返回主菜单流程
+User -> ContentManager: 点击"返回主菜单"
+ContentManager -> SceneTransitionManager: 请求过渡到主菜单
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(Out)
+SceneTransitionManager -> MainMenu: 异步加载主菜单
+MainMenu --> SceneTransitionManager: 场景加载完成
+SceneTransitionManager -> SceneTransitionManager: 播放过渡动画(In)
+SceneTransitionManager --> ContentManager: 通知过渡完成
+ContentManager -> ContentManager: 销毁自身
+
+@enduml

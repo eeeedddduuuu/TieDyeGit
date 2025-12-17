@@ -190,26 +190,37 @@ public class PatternTextureBaker : MonoBehaviour
 
             if (pData != null)
             {
-                // 注意：3D场景我们要用 whiteTextureSprite (黑底白花)
+                // 1. 设置图片
                 if (pData.whiteTextureSprite != null)
                     img.sprite = pData.whiteTextureSprite;
                 else if (pData.patternSprite != null)
-                    img.sprite = pData.patternSprite; // 保底
+                    img.sprite = pData.patternSprite;
 
-                // 针对用户上传图片的尺寸修正 (防止巨大化)
-                if (placement.patternId.StartsWith("User_"))
+                // 2. 【核心修改】优先使用保存的 SizeDelta
+                // 检查 sizeDelta 是否有效 (防止旧存档是 0,0 导致花纹消失)
+                if (placement.sizeDelta.x > 0 && placement.sizeDelta.y > 0)
                 {
-                    img.SetNativeSize();
-                    if (rect.sizeDelta.x > 300) // 限制最大宽度
-                    {
-                        float ratio = rect.sizeDelta.y / rect.sizeDelta.x;
-                        rect.sizeDelta = new Vector2(300, 300 * ratio);
-                    }
+                    // 如果存档里有尺寸，直接用存档的
+                    rect.sizeDelta = placement.sizeDelta;
                 }
                 else
                 {
-                    img.SetNativeSize(); // 普通花纹也重置一下大小
+                    // 如果是旧存档（没存尺寸），才回退到 SetNativeSize
+                    img.SetNativeSize();
+
+                    // 这里可以保留你之前的“防止巨大化”补丁作为双重保险
+                    if (placement.patternId.StartsWith("User_"))
+                    {
+                        if (rect.sizeDelta.x > 300)
+                        {
+                            float ratio = rect.sizeDelta.y / rect.sizeDelta.x;
+                            rect.sizeDelta = new Vector2(300, 300 * ratio);
+                        }
+                    }
                 }
+
+                // 3. 别忘了应用缩放 (Scale)
+                rect.localScale = placement.scale;
             }
         }
     }

@@ -117,7 +117,7 @@ public class TransformGizmoController : MonoBehaviour
                 Vector3 newScale = initialScale * factor;
 
                 // 限制最小最大缩放
-                newScale = Vector3.Max(Vector3.one * 0.2f, Vector3.Min(Vector3.one * 5f, newScale));
+                newScale = Vector3.Max(Vector3.one * 0.1f, Vector3.Min(Vector3.one * 5f, newScale));
 
                 targetPattern.localScale = newScale;
             }

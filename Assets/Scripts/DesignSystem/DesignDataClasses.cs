@@ -46,6 +46,9 @@ public class PatternPlacement
     public Vector2 scale = Vector2.one;
     public float rotation;
 
+    // 【新增】保存花纹的物理宽高 (解决大图变巨大的问题)
+    public Vector2 sizeDelta;
+
     // 辅助方法：深拷贝
     public PatternPlacement Clone()
     {
@@ -54,7 +57,8 @@ public class PatternPlacement
             patternId = this.patternId,
             position = this.position,
             scale = this.scale,
-            rotation = this.rotation
+            rotation = this.rotation,
+            sizeDelta = this.sizeDelta
         };
     }
 
