@@ -146,6 +146,8 @@ public class DraggablePattern : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
         // 置顶显示
         rectTransform.SetAsLastSibling();
+
+        originalScale = rectTransform.localScale;
     }
 
     // 设置选中状态
@@ -159,51 +161,12 @@ public class DraggablePattern : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             selectionOutline.enabled = selected;
         }
 
-        // 轻微的尺寸变化作为视觉反馈
-        if (selected)
-        {
-            rectTransform.localScale = originalScale * 1.02f;
-        }
-        else
-        {
-            rectTransform.localScale = originalScale;
-        }
     }
 
     // 设置交互模式
     public void SetInteractionMode(InteractionMode mode)
     {
         currentMode = mode;
-    }
-
-    // 缩放花纹
-    public void ScalePattern(float scaleDelta)
-    {
-        if (currentMode != InteractionMode.Scale) return;
-
-        Vector3 newScale = rectTransform.localScale + Vector3.one * scaleDelta * scaleSpeed;
-        newScale = Vector3.Max(Vector3.one * minScale, Vector3.Min(Vector3.one * maxScale, newScale));
-        rectTransform.localScale = newScale;
-
-        // 更新原始尺寸参考
-        if (isSelected)
-        {
-            originalScale = newScale / 1.02f;
-        }
-        else
-        {
-            originalScale = newScale;
-        }
-    }
-
-    // 旋转花纹
-    public void RotatePattern(float rotationDelta)
-    {
-        if (currentMode != InteractionMode.Rotate) return;
-
-        Vector3 newRotation = rectTransform.localEulerAngles;
-        newRotation.z += rotationDelta * rotationSpeed;
-        rectTransform.localEulerAngles = newRotation;
     }
 
     // 获取花纹数据（用于保存）

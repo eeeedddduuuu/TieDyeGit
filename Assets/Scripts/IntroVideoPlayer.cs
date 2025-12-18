@@ -30,7 +30,7 @@ public class IntroVideoController : MonoBehaviour
             gameObject.SetActive(false);
 
         // ������һ������
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("MainMenuScene");
     }
 
     void OnDestroy()

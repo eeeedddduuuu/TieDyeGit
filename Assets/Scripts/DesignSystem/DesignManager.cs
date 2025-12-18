@@ -32,11 +32,10 @@ public class DesignManager : MonoBehaviour
 
     void Update()
     {
-        // 处理鼠标滚轮输入
-        HandleMouseWheelInput();
-
         // 处理键盘输入（如删除）
         HandleKeyboardInput();
+
+        // 【已删除】原本的 HandleMouseWheelInput(); 调用被移除
     }
 
     // 初始化UI
@@ -167,7 +166,7 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // 设置当前交互模式
+    // 设置当前交互模式 (保留此方法，可能按钮点击还会用到它来切换UI状态)
     public void SetCurrentMode(DraggablePattern.InteractionMode mode)
     {
         if (selectedPattern != null)
@@ -191,24 +190,7 @@ public class DesignManager : MonoBehaviour
         }
     }
 
-    // 处理鼠标滚轮输入
-    private void HandleMouseWheelInput()
-    {
-        if (selectedPattern == null) return;
-
-        float scrollDelta = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scrollDelta) > 0.01f)
-        {
-            if (selectedPattern.currentMode == DraggablePattern.InteractionMode.Scale)
-            {
-                selectedPattern.ScalePattern(scrollDelta);
-            }
-            else if (selectedPattern.currentMode == DraggablePattern.InteractionMode.Rotate)
-            {
-                selectedPattern.RotatePattern(scrollDelta);
-            }
-        }
-    }
+    // 【已删除 HandleMouseWheelInput 方法】
 
     // 清空设计
     public void ClearDesign()
@@ -241,7 +223,6 @@ public class DesignManager : MonoBehaviour
 
         // 3. 最后跳转场景
         Debug.Log("设计数据保存成功");
-
     }
 
     // 收集设计数据
